@@ -13,7 +13,7 @@ namespace negocio
 
         public AccesoDatos()
         {
-            // TODO: Reemplazar "MI_BASE_DE_DATOS" con el nombre de tu base de datos local
+            // TODO: Reemplazar "MI_BASE_DE_DATOS" con la base de datos real.
             conexion = new SqlConnection("server=.\\SQLEXPRESS; database=MI_BASE_DE_DATOS; integrated security=true");
             comando = new SqlCommand();
         }
