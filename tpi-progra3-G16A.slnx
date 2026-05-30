@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="dominio/dominio.csproj" />
+  <Project Path="negocio/negocio.csproj" />
+  <Project Path="tpi-progra3-G16A/tpi-progra3-G16A.csproj" />
+</Solution>
