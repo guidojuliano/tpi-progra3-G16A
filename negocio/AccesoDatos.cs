@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace negocio
 {
@@ -8,13 +9,17 @@ namespace negocio
         private SqlConnection conexion;
         private SqlCommand comando;
         private SqlDataReader? lector;
-
         public SqlDataReader? Lector => lector;
 
         public AccesoDatos()
         {
-            // TODO: Reemplazar "MI_BASE_DE_DATOS" con la base de datos real.
-            conexion = new SqlConnection("server=.\\SQLEXPRESS; database=MI_BASE_DE_DATOS; integrated security=true");
+            //esto es para que no se rompa el proyecto al no tener la cadena de conexión en Web.config
+
+            var cs = ConfigurationManager.ConnectionStrings["RestoBarDb"]?.ConnectionString;
+            if (string.IsNullOrEmpty(cs))
+                throw new InvalidOperationException("Falta la cadena de conexión 'RestoBarDb' en Web.config");
+
+            conexion = new SqlConnection(cs);
             comando = new SqlCommand();
         }
 
@@ -22,6 +27,7 @@ namespace negocio
         {
             comando.CommandType = System.Data.CommandType.Text;
             comando.CommandText = consulta;
+            comando.Parameters.Clear();
         }
 
         public void ejecutarLectura()
@@ -32,9 +38,9 @@ namespace negocio
                 conexion.Open();
                 lector = comando.ExecuteReader();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -46,9 +52,9 @@ namespace negocio
                 conexion.Open();
                 comando.ExecuteNonQuery();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
