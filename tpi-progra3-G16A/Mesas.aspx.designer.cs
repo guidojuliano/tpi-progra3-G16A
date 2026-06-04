@@ -13,5 +13,6 @@ namespace tpi_progra3_G16A
 
     public partial class Mesas
     {
+        protected global::System.Web.UI.WebControls.GridView GridView1;
     }
 }

@@ -8,4 +8,7 @@
   <ItemGroup>
     <ProjectReference Include="..\dominio\dominio.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
 </Project>
