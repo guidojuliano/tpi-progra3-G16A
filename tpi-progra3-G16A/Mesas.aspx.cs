@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -14,11 +14,18 @@ namespace tpi_progra3_G16A
         {
             if (!IsPostBack)
             {
-
-                var negocioMesa = new negocio.MesaNegocio();
-                var mesas = negocioMesa.ObtenerMesas();
-                GridView1.DataSource = mesas;
-                GridView1.DataBind();
+                try
+                {
+                    var negocioMesa = new negocio.MesaNegocio();
+                    var mesas = negocioMesa.ObtenerMesas();
+                    GridView1.DataSource = mesas;
+                    GridView1.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    Session.Add("error", ex.ToString());
+                    Response.Redirect("Error.aspx", false);
+                }
             }
         }
     }

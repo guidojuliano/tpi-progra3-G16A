@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Mesas.aspx.cs" Inherits="tpi_progra3_G16A.Mesas" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="Mesas.aspx.cs" Inherits="tpi_progra3_G16A.Mesas" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -16,13 +16,18 @@
     </div>
     <div class="row justify-content-center mt-4">
         <div class="col-lg-10">
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" CssClass="table table-dark table-striped">
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" CssClass="table table-dark table-striped align-middle">
                 <Columns>
                     <asp:BoundField DataField="Id" HeaderText="Id" />
-                    <asp:BoundField DataField="Numero" HeaderText="Numero" />
-                    <asp:BoundField DataField="Ocupada" HeaderText="Ocupada" />
-                    <asp:BoundField DataField="MeseroId" HeaderText="MeseroId" />
-                    <asp:BoundField DataField="Estado" HeaderText="Estado" />
+                    <asp:BoundField DataField="Numero" HeaderText="Número" />
+                    <asp:BoundField DataField="MeseroId" HeaderText="ID Mesero" NullDisplayText="-" />
+                    <asp:TemplateField HeaderText="Estado">
+                        <ItemTemplate>
+                            <span class='<%# Eval("Estado").ToString() == "Libre" ? "badge bg-success" : "badge bg-danger" %>'>
+                                <%# Eval("Estado") %>
+                            </span>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
             </asp:GridView>
         </div>
