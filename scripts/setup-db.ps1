@@ -3,7 +3,13 @@
 
 # Configuración
 $SqlServer = ".\SQLEXPRESS"
-$ScriptPath = "D:\Programacion3\scripts\RestoBarDb.sql"
+$ScriptPath = Join-Path $PSScriptRoot "RestoBarDb.sql"
+
+# Verificar que sqlcmd está disponible
+if (-not (Get-Command sqlcmd -ErrorAction SilentlyContinue)) {
+    Write-Host "ERROR: sqlcmd no está instalado o no está en PATH" -ForegroundColor Red
+    exit 1
+}
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "Setup de Base de Datos - RestoBarDb" -ForegroundColor Cyan
