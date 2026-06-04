@@ -5,13 +5,21 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
+
 namespace tpi_progra3_G16A
 {
     public partial class Mesas : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
 
+                var negocioMesa = new negocio.MesaNegocio();
+                var mesas = negocioMesa.ObtenerMesas();
+                GridView1.DataSource = mesas;
+                GridView1.DataBind();
+            }
         }
     }
 }

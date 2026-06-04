@@ -14,4 +14,17 @@
             </div>
         </div>
     </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-lg-10">
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" CssClass="table table-dark table-striped">
+                <Columns>
+                    <asp:BoundField DataField="Id" HeaderText="Id" />
+                    <asp:BoundField DataField="Numero" HeaderText="Numero" />
+                    <asp:BoundField DataField="Ocupada" HeaderText="Ocupada" />
+                    <asp:BoundField DataField="MeseroId" HeaderText="MeseroId" />
+                    <asp:BoundField DataField="Estado" HeaderText="Estado" />
+                </Columns>
+            </asp:GridView>
+        </div>
+    </div>
 </asp:Content>

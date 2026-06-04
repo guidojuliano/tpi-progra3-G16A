@@ -1,0 +1,26 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: restobar-sqlserver
+    entrypoint: ["/bin/bash", "/scripts/init-db.sh"]
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: RestoBar2026
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-data:/var/opt/mssql
+      - ./scripts/init-db.sh:/scripts/init-db.sh
+      - ./scripts/RestoBarDb.sql:/scripts/RestoBarDb.sql
+    networks:
+      - restobar-network
+    restart: unless-stopped
+
+volumes:
+  sql-data:
+    driver: local
+
+networks:
+  restobar-network:
+    driver: bridge
