@@ -1,4 +1,8 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace dominio
 {
@@ -6,8 +10,8 @@ namespace dominio
     {
         public int Id { get; set; }
         public int Numero { get; set; }
-        public bool Ocupada { get; set; }
-        public int? MeseroId { get; set; }
-        public string Estado { get; set; } = string.Empty;
+        public EstadoMesa Estado { get; set; }
+        public int? MeseroId { get; set; } //sin asignar
+        public string NombreMesero { get; set; } //para mostrar el nombre del mesero asignado
     }
 }
