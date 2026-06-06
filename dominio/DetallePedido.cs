@@ -9,13 +9,9 @@ namespace dominio
     public class DetallePedido
     {
         public int Id { get; set; }
-        public int PedidoId { get; set; }
-        public int InsumoId { get; set; }
-        public string NombreInsumo { get; set; }
+        public Comanda Comanda { get; set; }
+        public Insumo Insumo { get; set; }
         public int Cantidad { get; set; }
-        public decimal PrecioUnitario { get; set; }
-        public EstadoDetalle Estado { get; set; }
-        public int? ChefId { get; set; } //sin asignar
-        public string NombreChef { get; set; } //para mostrar el nombre del chef asignado
+        public decimal PrecioUnitario { get; set; } = 0;
     }
 }

@@ -11,7 +11,6 @@ namespace dominio
         public int Id { get; set; }
         public int Numero { get; set; }
         public EstadoMesa Estado { get; set; }
-        public int? MeseroId { get; set; } //sin asignar
-        public string NombreMesero { get; set; } //para mostrar el nombre del mesero asignado
+        public Usuario Mesero { get; set; } //sin asignar
     }
 }
