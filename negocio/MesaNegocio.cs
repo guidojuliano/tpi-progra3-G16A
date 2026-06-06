@@ -29,9 +29,9 @@ namespace negocio
                     {
                         Id = lector.GetInt32(0),
                         Numero = lector.GetInt32(1),
-                        Ocupada = lector.GetBoolean(2),
                         MeseroId = lector.IsDBNull(3) ? null : (int?)lector.GetInt32(3),
-                        Estado = lector.IsDBNull(4) ? string.Empty : lector.GetString(4)
+                        Estado = lector.IsDBNull(4) ? EstadoMesa.Libre : (EstadoMesa)Enum.Parse(typeof(EstadoMesa), lector.GetString(4)),
+                        NombreMesero = string.Empty
                     };
                     lista.Add(mesa);
                 }
