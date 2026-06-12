@@ -58,3 +58,86 @@ Los reportes son visuales y permiten al **Gerente** evaluar el rendimiento del n
     *   Pedidos totales por mesa.
     *   Pedidos atendidos por cada mesero/a.
     *   Cantidad de platos cocinados por cada chef.
+
+---
+
+## Escenario de Ejemplo: Mesa 5 (2 personas)
+
+Para comprender mejor la lógica de negocio y la secuencia de pasos dentro del sistema, a continuación se detalla un escenario práctico de uso:
+
+### Paso 1: El Mesero abre la mesa
+Llega la familia a la Mesa 5. El mesero la selecciona en el sistema y hace clic en **"Abrir Mesa"**.
+* **Lógica de negocio:**
+  * La Mesa 5 cambia su estado a `Ocupada`.
+  * Se genera una nueva instancia de **Pedido**:
+    * **Id:** `1001` (autogenerado por la base de datos).
+    * **Mesa:** Mesa 5.
+    * **Mesero:** Juan (el usuario logueado).
+    * **FechaHora:** `2026-06-11 21:00` (hora en que se sentaron).
+    * **Estado:** `EstadoPedido.Abierto`.
+    * **Total:** `0.00` (inicialmente).
+
+### Paso 2: El Mesero toma el pedido (Ronda 1: Comidas y Bebidas)
+A las 21:05, el cliente pide *1 Milanesa con papas* (aclara: *"sin sal"*) y *1 Coca-Cola*. El mesero lo registra en su pantalla y presiona **"Enviar a Cocina"**.
+* **Lógica de negocio:**
+  * Se genera una instancia de **Comanda** asociada al Pedido:
+    * **Id:** `5001` (autogenerado).
+    * **Pedido:** Pedido 1001.
+    * **FechaHora:** `2026-06-11 21:05` (hora en que se mandó a marchar).
+    * **Estado:** `EstadoDetalle.Pendiente` (entra en cola de cocina).
+    * **Observaciones:** *"Traer la gaseosa rápido por favor"*.
+  * Se generan dos filas de **DetallePedido** asociadas a la Comanda 5001:
+    * **Detalle 1:** Insumo: *Milanesa*, Cantidad: 1, PrecioUnitario: `4500.00`, Notas: *"sin sal"*.
+    * **Detalle 2:** Insumo: *Coca-Cola*, Cantidad: 1, PrecioUnitario: `1200.00`, Notas: `""`.
+
+### Paso 3: El Cocinero ve el ticket en la pantalla de cocina
+En la pantalla de cocina (`Cocina.aspx`), al cocinero (e.g. Carlos) le aparece una tarjeta de la Comanda 5001 en estado **Pendiente**.
+* **Control del tiempo:** El sistema compara la hora actual (21:10) con la hora de la comanda (21:05) y muestra: *"Tiempo de espera: 5 minutos"*.
+* El cocinero lee la nota general (*"Traer la gaseosa rápido por favor"*) y la del plato (*"sin sal"*). Carlos presiona **"Empezar preparación"**.
+* **Lógica de negocio:**
+  * La Comanda 5001 se actualiza:
+    * **Estado:** `EstadoDetalle.EnPreparacion`.
+    * **Chef:** Carlos (el usuario logueado en la cocina).
+  * La gaseosa (que se sirve en barra) se marca como servida por el mozo, o el chef prepara la comida.
+
+### Paso 4: La comida está lista
+A las 21:20, el cocinero Carlos termina la milanesa, la sirve en el plato y presiona **"Completar"** en la pantalla de cocina.
+* **Lógica de negocio:**
+  * La Comanda 5001 se actualiza:
+    * **Estado:** `EstadoDetalle.Listo`.
+  * El sistema dispara una alerta visual en la pantalla de los meseros: *"Mesa 5 Comida lista para retirar"*.
+
+### Paso 5: El Mesero sirve la comida
+El mesero Juan retira el plato de la cocina, lo lleva a la Mesa 5 y, desde su dispositivo, confirma la entrega presionando **"Entregado"**.
+* **Lógica de negocio:**
+  * La Comanda 5001 se actualiza:
+    * **Estado:** `EstadoDetalle.Entregado`.
+
+### Paso 6: Los clientes piden postre (Ronda 2 - Opcional)
+A las 21:40, la mesa decide pedir *1 Tiramisú*. El mesero toma el pedido y lo envía.
+* **Lógica de negocio:**
+  * Se genera una segunda **Comanda** asociada al mismo pedido:
+    * **Id:** `5002` (autogenerada).
+    * **Pedido:** Pedido 1001.
+    * **FechaHora:** `2026-06-11 21:40`.
+    * **Estado:** `EstadoDetalle.Pendiente`.
+  * Se genera una línea en **DetallePedido** asociada a la Comanda 5002:
+    * **Detalle 3:** Insumo: *Tiramisú*, Cantidad: 1, PrecioUnitario: `2500.00`.
+  * El flujo de preparación de la cocina se repite para la Comanda 5002.
+
+### Paso 7: Cierre y Facturación
+A las 22:00, los clientes piden la cuenta. El mesero presiona **"Cobrar Mesa 5"**.
+* **Lógica de negocio:**
+  * El sistema busca el Pedido abierto de la Mesa 5 (que es el Pedido 1001).
+  * Realiza una consulta SQL para traer todos los detalles de todas las comandas asociadas a ese pedido:
+    * Trae Detalle 1 (`$4500.00`), Detalle 2 (`$1200.00`) y Detalle 3 (`$2500.00`).
+  * El sistema calcula el Total: `$4500.00 + $1200.00 + $2500.00 = $8200.00`.
+  * Se genera el ticket de cobro por `$8200.00`.
+  * Una vez registrado el pago:
+    * El Pedido 1001 se actualiza:
+      * **Total:** `8200.00`.
+      * **Estado:** `EstadoPedido.Cerrado`.
+    * La Mesa 5 se actualiza:
+      * **Estado:** `EstadoMesa.Libre`.
+      * **Mesero asignado:** `null` (disponible para el siguiente turno).
+
