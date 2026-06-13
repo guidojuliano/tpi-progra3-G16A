@@ -198,6 +198,11 @@ La clase [PedidoNegocio](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/ne
 | **`RegistrarComanda`** | `idPedido`, `detalles`, `observaciones` | **Lógica transaccional:** Verifica el stock físico de cada ítem. Si es suficiente, inserta la cabecera de la `Comanda`, asocia sus `DetallesPedidos` y decrementa el stock de cada `Insumo` en la base de datos. |
 | **`CerrarYCobrarPedido`** | `idPedido` | Suma los subtotales de todos los consumos, actualiza el pedido a `Cerrado`, registra el Total facturado y libera la mesa (setea a `Libre` y desvincula al mesero). |
 | **`ActualizarEstadoComanda`** | `idComanda`, `nuevoEstado` | Actualiza el estado del flujo de preparación de la comanda (e.g. de `Pendiente` a `EnPreparacion` o `Listo`). |
+| **`ObtenerPedidoPorId`** | `idPedido` | Recupera un pedido por su ID de base de datos, mapeando la mesa y el mesero asignado. |
+| **`ObtenerComandasPorEstado`** | `estado` | Obtiene el listado de comandas en un estado particular, cargando recursivamente sus detalles de insumos y el pedido asociado. |
+| **`ObtenerComandasActivas`** | - | Obtiene todas las comandas pendientes o en preparación (`Pendiente`, `EnPreparacion`) para el flujo del sector Cocina. |
+| **`ObtenerComandaPorId`** | `idComanda` | Recupera una comanda específica por su ID, cargando todos sus detalles de insumos y el pedido correspondiente. |
+| **`ObtenerDetallesPorComanda`** | `idComanda` | Consulta y retorna la lista de detalles de insumos (`DetallePedido`) asociados a una comanda en particular. |
 
 
 
