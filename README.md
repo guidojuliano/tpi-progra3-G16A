@@ -1,6 +1,6 @@
 # TPI Programación III - Resto Bar
 
-Este proyecto consiste en una aplicación web diseñada para la gestión integral de los pedidos y las mesas de un restaurante o resto bar. La aplicación está pensada para organizar el flujo de trabajo diario entre los distintos integrantes del local (Gerente, Meseros y Chefs) mediante una interfaz accesible con control de perfiles y seguridad.
+Este proyecto consiste en una aplicación web diseñada para la gestión integral de los pedidos y las mesas de un restaurante o resto bar. La aplicación está pensada para organizar el flujo de trabajo diario entre los distintos integrantes del local (Gerente, Meseros y Cocina) mediante una interfaz accesible con control de perfiles y seguridad.
 
 ---
 
@@ -16,9 +16,9 @@ La seguridad de la aplicación está resuelta mediante un sistema de inicio de s
 
 El sistema cuenta con tres perfiles bien diferenciados:
 
-*   **Gerente:** Posee acceso total a todas las funcionalidades del sistema. Su rol es puramente administrativo (no opera como mesero ni chef). Se encarga de dar de alta nuevos usuarios, asignarles sus perfiles, administrar el catálogo de insumos (platos y bebidas), gestionar los precios, controlar el stock y visualizar los reportes finales al cierre de la jornada.
-*   **Mesero/a:** Es el encargado del servicio en el salón. Puede visualizar las mesas que tiene asignadas para el día, realizar la apertura de nuevos pedidos agregando los platos o bebidas solicitados, registrar el consumo de los clientes, y recibir avisos visuales cuando los platos estén listos en la cocina. Finalmente, realiza el cierre del pedido para generar la cuenta (ticket de cobro) y liberar la mesa.
-*   **Chef:** Trabaja en la cocina. El sistema le muestra una pantalla específica únicamente con los platos que tiene asignados para cocinar. Al comenzar y finalizar la preparación de un plato, el chef actualiza su estado para notificar de manera automática al mesero correspondiente.
+*   **Gerente:** Posee acceso total a todas las funcionalidades del sistema. Su rol es puramente administrativo (no opera como mesero ni personal de cocina). Se encarga de dar de alta nuevos usuarios, asignarles sus perfiles, administrar el catálogo de insumos (platos y bebidas), gestionar los precios, controlar el stock y visualizar los reportes finales al cierre de la jornada.
+*   **Mesero/a:** Es el encargado del servicio en el salón. Puede visualizar las mesas que tiene asignadas para el día, realizar la apertura de nuevos pedidos agregando los platos o bebidas solicitados, registrar el consumo de los clientes, y recibir avisos visuales cuando las comandas estén listas en la cocina. Finalmente, realiza el cierre del pedido para generar la cuenta (ticket de cobro) y liberar la mesa.
+*   **Cocina:** Trabaja en el sector de la cocina. El sistema les muestra una pantalla específica con las comandas pendientes. Al comenzar y finalizar la preparación de una comanda, actualizan su estado para notificar de manera automática al mesero correspondiente.
 
 ---
 
@@ -41,14 +41,14 @@ Al inicio del día, el **Gerente** es el encargado de asignar qué mesa será at
 *   Cada insumo tiene asociado un **Nombre, un Precio y una Cantidad en Stock**.
 *   El stock se descuenta de forma automática cuando un mesero agrega un ítem a un pedido. Si el stock de un insumo llega a cero, el sistema bloquea su selección para nuevos pedidos.
 
-### 4. Flujo de Cocina y Asignación Inteligente
-*   Al tomarse un pedido, los platos se envían automáticamente a la cocina.
-*   El sistema realiza una **asignación automática por plato** al chef que tenga menor carga de trabajo (menor cantidad de platos pendientes de cocinar) al momento del registro. Esto distribuye el trabajo equitativamente entre los chefs y reduce la espera de los clientes.
-*   El estado del plato en cocina sigue un ciclo de vida claro:
-    *   **Pendiente:** Agregado al pedido pero aún no asignado a un chef o el chef asignado no empezó a cocinarlo.
-    *   **En Preparación:** El chef asignado lo tomó y se encuentra cocinándolo. El mesero puede ver que el plato está en proceso.
-    *   **Listo:** El chef terminó de cocinarlo y lo marca como finalizado. Esto alerta inmediatamente al mesero para que vaya a retirarlo y entregarlo a la mesa.
-    *   **Entregado:** El mesero confirma la entrega del plato en la mesa, lo que da por concluida la trazabilidad de ese ítem.
+### 4. Flujo de Cocina
+*   Al registrarse una comanda, los platos y bebidas solicitados se envían automáticamente al sector de cocina.
+*   El personal de cocina visualiza las comandas pendientes en su pantalla específica (`Cocina.aspx`) y las toma manualmente (modelo Pull) para iniciar su preparación.
+*   El estado de la comanda en cocina sigue un ciclo de vida claro:
+    *   **Pendiente:** Enviada a cocina y a la espera de ser tomada para su preparación.
+    *   **En Preparación:** El personal de cocina inició la elaboración de los ítems de la comanda. El mesero puede ver que la comanda está en proceso.
+    *   **Listo:** Se finalizó la preparación de todos los platos de la comanda. Esto alerta inmediatamente al mesero para que vaya a retirarla.
+    *   **Entregado:** El mesero confirma la entrega de la comanda en la mesa, dando por concluida la trazabilidad de ese envío.
 
 ### 5. Reportes de Gestión
 Los reportes son visuales y permiten al **Gerente** evaluar el rendimiento del negocio.
@@ -57,7 +57,7 @@ Los reportes son visuales y permiten al **Gerente** evaluar el rendimiento del n
 *   **Reportes Disponibles:**
     *   Pedidos totales por mesa.
     *   Pedidos atendidos por cada mesero/a.
-    *   Cantidad de platos cocinados por cada chef.
+    *   Comandas completadas por el sector de cocina.
 
 ---
 
@@ -78,7 +78,7 @@ Llega la familia a la Mesa 5. El mesero la selecciona en el sistema y hace clic 
     * **Total:** `0.00` (inicialmente).
 
 ### Paso 2: El Mesero toma el pedido (Ronda 1: Comidas y Bebidas)
-A las 21:05, el cliente pide *1 Milanesa con papas* (aclara: *"sin sal"*) y *1 Coca-Cola*. El mesero lo registra en su pantalla y presiona **"Enviar a Cocina"**.
+A las 21:05, el cliente pide *1 Milanesa con papas* y *1 Coca-Cola*. El mesero lo registra en su pantalla y presiona **"Enviar a Cocina"**.
 * **Lógica de negocio:**
   * Se genera una instancia de **Comanda** asociada al Pedido:
     * **Id:** `5001` (autogenerado).
@@ -87,28 +87,27 @@ A las 21:05, el cliente pide *1 Milanesa con papas* (aclara: *"sin sal"*) y *1 C
     * **Estado:** `EstadoDetalle.Pendiente` (entra en cola de cocina).
     * **Observaciones:** *"Traer la gaseosa rápido por favor"*.
   * Se generan dos filas de **DetallePedido** asociadas a la Comanda 5001:
-    * **Detalle 1:** Insumo: *Milanesa*, Cantidad: 1, PrecioUnitario: `4500.00`, Notas: *"sin sal"*.
-    * **Detalle 2:** Insumo: *Coca-Cola*, Cantidad: 1, PrecioUnitario: `1200.00`, Notas: `""`.
+    * **Detalle 1:** Insumo: *Milanesa*, Cantidad: 1, PrecioUnitario: `4500.00`.
+    * **Detalle 2:** Insumo: *Coca-Cola*, Cantidad: 1, PrecioUnitario: `1200.00`.
 
 ### Paso 3: El Cocinero ve el ticket en la pantalla de cocina
-En la pantalla de cocina (`Cocina.aspx`), al cocinero (e.g. Carlos) le aparece una tarjeta de la Comanda 5001 en estado **Pendiente**.
+En la pantalla de cocina (`Cocina.aspx`), al personal de cocina le aparece una tarjeta de la Comanda 5001 en estado **Pendiente**.
 * **Control del tiempo:** El sistema compara la hora actual (21:10) con la hora de la comanda (21:05) y muestra: *"Tiempo de espera: 5 minutos"*.
-* El cocinero lee la nota general (*"Traer la gaseosa rápido por favor"*) y la del plato (*"sin sal"*). Carlos presiona **"Empezar preparación"**.
+* Se lee la nota general (*"Traer la gaseosa rápido por favor"*). El cocinero presiona **"Empezar preparación"**.
 * **Lógica de negocio:**
   * La Comanda 5001 se actualiza:
     * **Estado:** `EstadoDetalle.EnPreparacion`.
-    * **Chef:** Carlos (el usuario logueado en la cocina).
-  * La gaseosa (que se sirve en barra) se marca como servida por el mozo, o el chef prepara la comida.
+  * La gaseosa (que se sirve en barra) se marca como servida por el mozo, o la cocina prepara la comida.
 
 ### Paso 4: La comida está lista
-A las 21:20, el cocinero Carlos termina la milanesa, la sirve en el plato y presiona **"Completar"** en la pantalla de cocina.
+A las 21:20, se termina la preparación de la comanda y se presiona **"Completar"** en la pantalla de cocina.
 * **Lógica de negocio:**
   * La Comanda 5001 se actualiza:
     * **Estado:** `EstadoDetalle.Listo`.
   * El sistema dispara una alerta visual en la pantalla de los meseros: *"Mesa 5 Comida lista para retirar"*.
 
 ### Paso 5: El Mesero sirve la comida
-El mesero Juan retira el plato de la cocina, lo lleva a la Mesa 5 y, desde su dispositivo, confirma la entrega presionando **"Entregado"**.
+El mesero Juan retira la comanda de la cocina, la lleva a la Mesa 5 y, desde su dispositivo, confirma la entrega presionando **"Entregado"**.
 * **Lógica de negocio:**
   * La Comanda 5001 se actualiza:
     * **Estado:** `EstadoDetalle.Entregado`.
@@ -186,7 +185,7 @@ En la última sesión se integró el ciclo de vida de los **Pedidos** y **Comand
 #### 1. Extensiones al Modelo de Base de Datos
 Se agregaron tres tablas clave al script [RestoBarDb.sql](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/scripts/RestoBarDb.sql):
 * **`Pedidos`:** Registra la cabecera de la orden (Mesa, Mesero, Fecha/Hora, Estado `Abierto`/`Cerrado` y el Total facturado).
-* **`Comandas`:** Agrupa una ronda de consumos enviados a cocina (vinculado a un Pedido, con Estado `Pendiente`/`EnPreparacion`/`Listo`/`Entregado`, Fecha/Hora y Notas).
+* **`Comandas`:** Agrupa una ronda de consumos enviados a cocina (vinculado a un Pedido, con Estado `Pendiente`/`EnPreparacion`/`Listo`/`Entregado`, Fecha/Hora y Observaciones).
 * **`DetallesPedidos`:** Tabla intermedia que asocia cada Comanda con los `Insumos` (platos o bebidas), registrando cantidad y precio unitario histórico.
 
 #### 2. Lógica de Negocio (`PedidoNegocio.cs`)
