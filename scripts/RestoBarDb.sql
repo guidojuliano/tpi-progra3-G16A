@@ -92,7 +92,7 @@ INSERT INTO Usuarios (Nombre, Apellido, Email, Password, Rol, Activo) VALUES
 ('Juan', 'Perez', 'juan.perez@restobar.com', 'admin123', 'Gerente', 1),
 ('Martin', 'Gomez', 'martin.gomez@restobar.com', 'mesero123', 'Mesero', 1),
 ('Ana', 'Lopez', 'ana.lopez@restobar.com', 'mesero123', 'Mesero', 1),
-('Carlos', 'Rodriguez', 'carlos.rod@restobar.com', 'chef123', 'Chef', 1);
+('Carlos', 'Rodriguez', 'carlos.rod@restobar.com', 'chef123', 'Cocina', 1);
 
 -- Mesas
 INSERT INTO Mesas (Numero, Ocupada, MeseroId, Estado) VALUES 
