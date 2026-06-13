@@ -141,3 +141,64 @@ A las 22:00, los clientes piden la cuenta. El mesero presiona **"Cobrar Mesa 5"*
       * **Estado:** `EstadoMesa.Libre`.
       * **Mesero asignado:** `null` (disponible para el siguiente turno).
 
+---
+
+## Arquitectura y Diseño Técnico
+
+El sistema está diseñado bajo un esquema de **Arquitectura en Capas (N-Tier)** para desacoplar la interfaz de usuario, las reglas de negocio y el acceso físico a los datos.
+
+### Estructura de Capas y Responsabilidades
+
+| Capa | Proyecto / Carpeta | Responsabilidad Principal | Clases Clave |
+| :--- | :--- | :--- | :--- |
+| **Presentación** | `tpi-progra3-G16A` | Interfaz gráfica Web Forms (.aspx). Captura eventos del usuario y delega la ejecución de lógica. | `Default.aspx`, `Mesas.aspx`, `Pedidos.aspx`, `Cocina.aspx` |
+| **Negocio (BLL)** | `negocio` | Implementa las reglas del dominio y coordina las operaciones CRUD y de control. | [InsumoNegocio](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/negocio/InsumoNegocio.cs), [MesaNegocio](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/negocio/MesaNegocio.cs), [UsuarioNegocio](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/negocio/UsuarioNegocio.cs) |
+| **Acceso a Datos (DAL)** | `negocio/AccesoDatos.cs` | Centraliza la conexión a SQL Server y la ejecución de comandos parametrizados (ADO.NET). | [AccesoDatos](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/negocio/AccesoDatos.cs) |
+| **Dominio (Entidades)** | `dominio` | Clases planas (POCO) que representan el modelo relacional en memoria. Sin dependencias externas. | [Mesa](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/dominio/Mesa.cs), [Usuario](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/dominio/Usuario.cs), [Insumo](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/dominio/Insumo.cs), [Comanda](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/dominio/Comanda.cs) |
+
+### Flujo de Datos e Interacción
+
+El flujo típico de una solicitud (por ejemplo, cargar la lista de mesas ocupadas) sigue esta secuencia:
+
+```mermaid
+graph TD
+    UI[Capa de Presentación: Mesas.aspx] -->|1. Solicita datos| BLL[Capa de Negocio: MesaNegocio]
+    BLL -->|2. Abre conexión y ejecuta consulta SQL| DAL[Acceso a Datos: AccesoDatos]
+    DAL -->|3. Consulta física| DB[(SQL Server / Docker)]
+    DB -->|4. Retorna filas| DAL
+    DAL -->|5. Provee SqlDataReader| BLL
+    BLL -->|6. Mapea SqlDataReader a List &lt;Mesa&gt;| UI
+    UI -->|7. Renderiza GridView| Usuario[Navegador del Cliente]
+    
+    style UI fill:#2b2d42,stroke:#8d99ae,stroke-width:2px,color:#fff
+    style BLL fill:#3a86c8,stroke:#8d99ae,stroke-width:2px,color:#fff
+    style DAL fill:#f15bb5,stroke:#8d99ae,stroke-width:2px,color:#fff
+    style DB fill:#fee440,stroke:#8d99ae,stroke-width:2px,color:#000
+```
+
+> [!NOTE]
+> **Seguridad y Robustez:** El acceso a la base de datos se realiza estrictamente a través de consultas parametrizadas para evitar ataques de inyección SQL. La base de datos corre dockerizada en un contenedor local con scripts de inicialización automática para facilitar la portabilidad del entorno de desarrollo.
+
+### Implementación del Módulo Pedidos y Comandas (Backend)
+
+En la última sesión se integró el ciclo de vida de los **Pedidos** y **Comandas** en la capa de datos y negocio, sentando las bases backend para la futura interfaz gráfica.
+
+#### 1. Extensiones al Modelo de Base de Datos
+Se agregaron tres tablas clave al script [RestoBarDb.sql](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/scripts/RestoBarDb.sql):
+* **`Pedidos`:** Registra la cabecera de la orden (Mesa, Mesero, Fecha/Hora, Estado `Abierto`/`Cerrado` y el Total facturado).
+* **`Comandas`:** Agrupa una ronda de consumos enviados a cocina (vinculado a un Pedido, con Estado `Pendiente`/`EnPreparacion`/`Listo`/`Entregado`, Fecha/Hora y Notas).
+* **`DetallesPedidos`:** Tabla intermedia que asocia cada Comanda con los `Insumos` (platos o bebidas), registrando cantidad y precio unitario histórico.
+
+#### 2. Lógica de Negocio (`PedidoNegocio.cs`)
+La clase [PedidoNegocio](file:///C:/Users/moca_/source/repos/tpi-progra3-G16A/negocio/PedidoNegocio.cs) implementa las siguientes operaciones:
+
+| Método | Entrada | Acción Principal |
+| :--- | :--- | :--- |
+| **`ObtenerPedidoAbiertoPorMesa`** | `idMesa` | Consulta si la mesa tiene un pedido activo en estado `Abierto`. Retorna el objeto `Pedido` completo mapeado con su respectivo mesero. |
+| **`AbrirPedido`** | `idMesa`, `idMesero` | Valida que la mesa esté libre, crea el registro en `Pedidos` y marca la mesa como `Ocupada` asignándole el mesero responsable. |
+| **`RegistrarComanda`** | `idPedido`, `detalles`, `observaciones` | **Lógica transaccional:** Verifica el stock físico de cada ítem. Si es suficiente, inserta la cabecera de la `Comanda`, asocia sus `DetallesPedidos` y decrementa el stock de cada `Insumo` en la base de datos. |
+| **`CerrarYCobrarPedido`** | `idPedido` | Suma los subtotales de todos los consumos, actualiza el pedido a `Cerrado`, registra el Total facturado y libera la mesa (setea a `Libre` y desvincula al mesero). |
+| **`ActualizarEstadoComanda`** | `idComanda`, `nuevoEstado` | Actualiza el estado del flujo de preparación de la comanda (e.g. de `Pendiente` a `EnPreparacion` o `Listo`). |
+
+
+

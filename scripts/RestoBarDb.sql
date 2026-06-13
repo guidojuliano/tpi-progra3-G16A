@@ -54,6 +54,37 @@ CREATE TABLE Insumos (
 );
 GO
 
+-- 5.2. CREAR TABLA Pedidos
+CREATE TABLE Pedidos (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    MesaId INT NOT NULL FOREIGN KEY REFERENCES Mesas(Id),
+    MeseroId INT NOT NULL FOREIGN KEY REFERENCES Usuarios(Id),
+    FechaHora DATETIME NOT NULL,
+    Estado NVARCHAR(50) NOT NULL,
+    Total DECIMAL(18,2) NOT NULL DEFAULT 0.00
+);
+GO
+
+-- 5.3. CREAR TABLA Comandas
+CREATE TABLE Comandas (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    PedidoId INT NOT NULL FOREIGN KEY REFERENCES Pedidos(Id),
+    Estado NVARCHAR(50) NOT NULL,
+    FechaHora DATETIME NOT NULL,
+    Observaciones NVARCHAR(500) NULL
+);
+GO
+
+-- 5.4. CREAR TABLA DetallesPedidos
+CREATE TABLE DetallesPedidos (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ComandaId INT NOT NULL FOREIGN KEY REFERENCES Comandas(Id),
+    InsumoId INT NOT NULL FOREIGN KEY REFERENCES Insumos(Id),
+    Cantidad INT NOT NULL,
+    PrecioUnitario DECIMAL(18,2) NOT NULL
+);
+GO
+
 -- 6. INSERTAR DATOS DE PRUEBA
 
 -- Usuarios
@@ -89,4 +120,7 @@ SELECT 'Tablas creadas y pobladas correctamente' AS [Estado];
 SELECT * FROM Usuarios;
 SELECT * FROM Mesas;
 SELECT * FROM Insumos;
+SELECT * FROM Pedidos;
+SELECT * FROM Comandas;
+SELECT * FROM DetallesPedidos;
 GO
