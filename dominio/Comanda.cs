@@ -10,9 +10,10 @@ namespace dominio
     {
         public int Id { get; set; }
         public Pedido Pedido { get; set; }
-        public Usuario Chef { get; set; }
         public EstadoDetalle Estado { get; set; }
         public List<DetallePedido> Detalles { get; set; }
+        public DateTime FechaHora { get; set; }
+        public string Observaciones { get; set; }
     }
 }
 
