@@ -18,7 +18,7 @@ namespace negocio
 
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre, Apellido, Email, Password, Rol, Activo FROM Usuarios WHERE Activo = 1");
+                datos.setearConsulta("SELECT Id, Nombre, Apellido, Email, Password, Rol, Activo FROM Usuarios");
                 datos.ejecutarLectura();
 
                 var lector = datos.Lector;

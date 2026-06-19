@@ -40,5 +40,25 @@ namespace tpi_progra3_G16A
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContent;
+
+        /// <summary>
+        /// Control phAnonimo.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.PlaceHolder phAnonimo;
+
+        /// <summary>
+        /// Control phUsuario.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.PlaceHolder phUsuario;
+
+        /// <summary>
+        /// Control lblUserDisplay.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.Label lblUserDisplay;
+
+        /// <summary>
+        /// Control btnCerrarSesion.
+        /// </summary>
+        protected global::System.Web.UI.WebControls.LinkButton btnCerrarSesion;
     }
 }
