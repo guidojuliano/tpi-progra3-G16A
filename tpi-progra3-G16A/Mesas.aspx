@@ -20,7 +20,11 @@
                 <Columns>
                     <asp:BoundField DataField="Id" HeaderText="Id" />
                     <asp:BoundField DataField="Numero" HeaderText="Número" />
-                    <asp:BoundField DataField="MeseroId" HeaderText="ID Mesero" NullDisplayText="-" />
+                    <asp:TemplateField HeaderText="ID Mesero">
+                        <ItemTemplate>
+                            <%# Eval("Mesero") != null ? ((dominio.Usuario)Eval("Mesero")).Id.ToString() : "-" %>
+                        </ItemTemplate>
+                    </asp:TemplateField>
                     <asp:TemplateField HeaderText="Estado">
                         <ItemTemplate>
                             <span class='<%# Eval("Estado").ToString() == "Libre" ? "badge bg-success" : "badge bg-danger" %>'>
