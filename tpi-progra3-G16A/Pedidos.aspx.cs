@@ -27,10 +27,15 @@ namespace tpi_progra3_G16A
 
             if(usuario.Rol == Rol.Gerente)
             {
+                //gerente solo puede ver
                 pnlAgregarInsumo.Visible = false;
                 btnAbrirPedido.Visible = false;
-                btnCerrarPedido.Visible = false;
+                btnCerrarPedido.Visible = true;
                 gvDetalles.Columns[4].Visible = false; //no ve la columna del boton eliminar
+            }
+            else if(usuario.Rol == Rol.Mesero)
+            {
+                btnCerrarPedido.Visible = false; //mesero no puede cerrar pedidos
             }
         }
 
