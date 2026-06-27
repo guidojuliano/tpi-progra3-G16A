@@ -60,5 +60,12 @@ namespace tpi_progra3_G16A
         /// Control btnCerrarSesion.
         /// </summary>
         protected global::System.Web.UI.WebControls.LinkButton btnCerrarSesion;
+
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liMesas;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liPedidos;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liCocina;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liCatalogo;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liAdmin;
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl liReportes;
     }
 }

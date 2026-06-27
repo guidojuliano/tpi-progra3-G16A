@@ -16,7 +16,11 @@
                     <p class="text-secondary small mb-4">
                         Por favor, contacte al administrador del sistema o intente nuevamente más tarde.
                     </p>
-                    <div class="d-flex justify-content-center gap-2">
+                    <div class="alert alert-danger text-start mt-3" runat="server" id="divErrorDetalle" visible="false">
+                        <strong class="text-danger">Detalles técnicos del error:</strong>
+                        <pre class="mb-0 mt-2 text-white" style="white-space: pre-wrap; font-family: monospace; font-size: 0.85rem;"><asp:Label ID="lblMensajeError" runat="server"></asp:Label></pre>
+                    </div>
+                    <div class="d-flex justify-content-center gap-2 mt-4">
                         <a href="Default.aspx" class="btn btn-outline-light px-4">Volver al Inicio</a>
                     </div>
                 </div>
