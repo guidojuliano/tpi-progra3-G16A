@@ -15,6 +15,7 @@ namespace tpi_progra3_G16A
             {
                 CargarMesas();
                 CargarMeseros();
+                CargarInsumos();
             }
         }
 
@@ -108,12 +109,75 @@ namespace tpi_progra3_G16A
 
                 gvDetalles.DataSource = detalles;
                 gvDetalles.DataBind();
+                ActualizarTotal(idPedido);
             }
             catch(Exception ex)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
                 $"showToast('{ex.Message}', 'warning');", true);
             }
+        }
+
+        private void CargarInsumos()
+        {
+            var insumoNegocio = new InsumoNegocio();
+            var insumos = insumoNegocio.ObtenerInsumos();
+
+            ddlInsumos.DataSource = insumos;
+            ddlInsumos.DataTextField = "Nombre";
+            ddlInsumos.DataValueField = "Id";
+            ddlInsumos.DataBind();
+        }
+
+        protected void btnAgregarInsumo_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int idPedido = (int)ViewState["idPedidoActivo"];
+                int idInsumo = int.Parse(ddlInsumos.SelectedValue);
+                int cantidad = int.Parse(txtCantidad.Text);
+                string observaciones = txtObservaciones.Text.Trim();
+
+                if (cantidad <= 0)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        "showToast('La cantidad debe ser mayor a 0.', 'warning');", true);
+                    return;
+                }
+
+                var insumoNegocio = new InsumoNegocio();
+                var insumo = insumoNegocio.ObtenerInsumoPorId(idInsumo);
+
+                var detalle = new DetallePedido
+                {
+                    Insumo = insumo,
+                    Cantidad = cantidad,
+                    PrecioUnitario = insumo.Precio
+                };
+
+                var pedidoNegocio = new PedidoNegocio();
+                pedidoNegocio.RegistrarComanda(idPedido, new List<DetallePedido> { detalle }, observaciones);
+
+                txtCantidad.Text = "1";
+                txtObservaciones.Text = string.Empty;
+                CargarDetallePedido(idPedido);
+
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                    "showToast('Insumo agregado con exito.', 'success');", true);
+            }
+            catch (Exception ex)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                    $"showToast('{ex.Message}', 'warning');", true);
+            }
+        }
+
+        private void ActualizarTotal(int idPedido)
+        {
+            var pedidoNegocio = new PedidoNegocio();
+            var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
+            var total = comandas.SelectMany(c => c.Detalles).Sum(d => d.Subtotal);
+            lblTotal.Text = total.ToString("N2");
         }
 
         protected void btnCerrarPedido_Click(object sender, EventArgs e)

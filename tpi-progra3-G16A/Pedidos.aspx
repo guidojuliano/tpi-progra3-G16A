@@ -34,7 +34,7 @@
                 <p>Mesero: <asp:Label ID="lblMesero" runat="server"></asp:Label></p>
                 <p>Total: $<asp:Label ID="lblTotal" runat="server"></asp:Label></p>
 
-           <!-- Gria de ítems consumidos -->
+           <!-- Grila de ítems consumidos -->
            <asp:GridView ID="gvDetalles" runat="server" CssClass="table table-dark table-bordered mt-3"
             AutoGenerateColumns="false" EmptyDataText="Sin ítems registrados aún.">
             <Columns>
@@ -44,6 +44,25 @@
                 <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
             </Columns>
         </asp:GridView>
+
+          <!-- Formulario agregar insumo -->
+            <asp:Panel ID="pnlAgregarInsumo" runat="server" CssClass="card bg-secondary mt-3 p-3">
+                <h5 class="text-white">Agregar Insumo</h5>
+                <div class="mb-2">
+                    <label class="form-label text-white">Insumo</label>
+                    <asp:DropDownList ID="ddlInsumos" runat="server" CssClass="form-select"></asp:DropDownList>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-white">Cantidad</label>
+                    <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" Text="1"></asp:TextBox>
+                </div>
+                <div class="mb-2">
+                    <label class="form-label text-white">Observaciones</label>
+                    <asp:TextBox ID="txtObservaciones" runat="server" CssClass="form-control" placeholder="Ej: sin cebolla, bien cocido..."></asp:TextBox>
+                </div>
+                <asp:Button ID="btnAgregarInsumo" runat="server" Text="Agregar al Pedido"
+                    CssClass="btn btn-warning" OnClick="btnAgregarInsumo_Click" />
+            </asp:Panel>
 
         <!-- Botón cerrar y cobrar -->
         <asp:Button ID="btnCerrarPedido" runat="server" Text="Cerrar y Cobrar" 
