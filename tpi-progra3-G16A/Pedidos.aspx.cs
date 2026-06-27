@@ -72,6 +72,8 @@ namespace tpi_progra3_G16A
                 pnlMesaOcupada.Visible = true;
                 lblMesero.Text = pedidoAbierto.Mesero.Nombre + " " + pedidoAbierto.Mesero.Apellido;
                 lblTotal.Text = pedidoAbierto.Total.ToString("N2");
+                ViewState["idPedidoActivo"] = pedidoAbierto.Id; //importante para poder usarlo en btnCerrarPedido_click para saber que pedido cerrar, sin esto al hacer postback edel botón perdería el id del pedido activo.
+                CargarDetallePedido(pedidoAbierto.Id);
             }
         }
 
@@ -95,5 +97,28 @@ namespace tpi_progra3_G16A
                     $"showToast('{ex.Message}', 'warning'", true);
             }
 }
-}
+        private void CargarDetallePedido(int idPedido)
+        {
+            try
+            {
+                var pedidoNegocio = new PedidoNegocio();
+                var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
+
+                var detalles = comandas.SelectMany(c => c.Detalles).ToList();
+
+                gvDetalles.DataSource = detalles;
+                gvDetalles.DataBind();
+            }
+            catch(Exception ex)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                $"showToast('{ex.Message}', 'warning');", true);
+            }
+        }
+
+        protected void btnCerrarPedido_Click(object sender, EventArgs e)
+        {
+            // TODO: Paso 4 - cerrar y cobrar
+        }
+    }
 }

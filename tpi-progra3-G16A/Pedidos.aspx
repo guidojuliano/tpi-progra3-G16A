@@ -33,6 +33,21 @@
                 <h4 class="text-warning">Pedido Activo</h4>
                 <p>Mesero: <asp:Label ID="lblMesero" runat="server"></asp:Label></p>
                 <p>Total: $<asp:Label ID="lblTotal" runat="server"></asp:Label></p>
+
+           <!-- Gria de ítems consumidos -->
+           <asp:GridView ID="gvDetalles" runat="server" CssClass="table table-dark table-bordered mt-3"
+            AutoGenerateColumns="false" EmptyDataText="Sin ítems registrados aún.">
+            <Columns>
+                <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
+                <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
+                <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
+                <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
+            </Columns>
+        </asp:GridView>
+
+        <!-- Botón cerrar y cobrar -->
+        <asp:Button ID="btnCerrarPedido" runat="server" Text="Cerrar y Cobrar" 
+            CssClass="btn btn-danger mt-3" OnClick="btnCerrarPedido_Click" />
             </div>
         </asp:Panel>
 
