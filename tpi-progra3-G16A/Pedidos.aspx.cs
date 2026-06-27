@@ -16,6 +16,21 @@ namespace tpi_progra3_G16A
                 CargarMesas();
                 CargarMeseros();
                 CargarInsumos();
+                AplicarRestriccionRol();
+            }
+        }
+
+        private void AplicarRestriccionRol()
+        {
+            var usuario = Session["usuario"] as Usuario;
+            if (usuario == null) return;
+
+            if(usuario.Rol == Rol.Gerente)
+            {
+                pnlAgregarInsumo.Visible = false;
+                btnAbrirPedido.Visible = false;
+                btnCerrarPedido.Visible = false;
+                gvDetalles.Columns[4].Visible = false; //no ve la columna del boton eliminar
             }
         }
 
