@@ -11,13 +11,32 @@ namespace tpi_progra3_G16A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!Seguridad.EsMesero(Session["usuario"]) && !Seguridad.EsGerente(Session["usuario"]))
+            {
+                Session.Add("error", "No tienes permisos para acceder a los pedidos.");
+                Response.Redirect("Error.aspx", false);
+                return;
+            }
+
             if (!IsPostBack)
             {
                 CargarMesas();
                 CargarMeseros();
                 CargarInsumos();
-                AplicarRestriccionRol();
+
+                // Pre-seleccionar mesa desde QueryString si viene de la pantalla de Salón
+                if (Request.QueryString["mesaId"] != null)
+                {
+                    string mesaIdStr = Request.QueryString["mesaId"];
+                    if (ddlMesas.Items.FindByValue(mesaIdStr) != null)
+                    {
+                        ddlMesas.SelectedValue = mesaIdStr;
+                        MostrarEstadoMesa();
+                    }
+                }
             }
+
+            AplicarRestriccionRol();
         }
 
         private void AplicarRestriccionRol()
@@ -115,9 +134,10 @@ namespace tpi_progra3_G16A
             catch(Exception ex)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
-                    $"showToast('{ex.Message}', 'warning'", true);
+                    $"showToast('{ex.Message}', 'warning');", true);
             }
-}
+        }
+
         private void CargarDetallePedido(int idPedido)
         {
             try

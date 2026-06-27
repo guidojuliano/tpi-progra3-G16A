@@ -13,11 +13,6 @@
                     <p class="col-md-10 fs-5 text-secondary">
                         Sistema integral para la administración de mesas, pedidos y flujo de trabajo en cocina. Diseñado para optimizar los tiempos de atención y organizar los perfiles de Gerente, Meseros y Chefs.
                     </p>
-                    <hr class="my-4 border-secondary">
-                    <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-warning fw-bold px-4">Ingresar al Sistema</a>
-                        <a href="#" class="btn btn-outline-light px-4">Ver Catálogo</a>
-                    </div>
                 </div>
             </div>
 
