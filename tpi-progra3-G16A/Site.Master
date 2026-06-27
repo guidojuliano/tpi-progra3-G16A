@@ -33,6 +33,25 @@
             var toast = new bootstrap.Toast(toastEl, { delay: 4000 });
             toast.show();
         }
+
+        // Control dinámico de clase active en el menú de navegación
+        document.addEventListener("DOMContentLoaded", function () {
+            var path = window.location.pathname;
+            var page = path.split("/").pop();
+
+            if (!page || page.toLowerCase() === "default.aspx") {
+                page = "Default.aspx";
+            }
+
+            var navLinks = document.querySelectorAll(".navbar-nav .nav-link");
+            navLinks.forEach(function (link) {
+                link.classList.remove("active");
+                var href = link.getAttribute("href");
+                if (href && href.toLowerCase() === page.toLowerCase()) {
+                    link.classList.add("active");
+                }
+            });
+        });
     </script>
 
     <style>
@@ -145,7 +164,7 @@
 
         <footer class="bg-dark border-top border-secondary py-4 text-center mt-auto">
             <div class="container">
-                <p class="text-white small mb-0">Resto Bar &copy; 2026 - TPI Programación III - UTN FRGP</p>
+                <p class="text-white small mb-0">Resto Bar - TPI Programación III - UTN FRGP</p>
             </div>
         </footer>
 
