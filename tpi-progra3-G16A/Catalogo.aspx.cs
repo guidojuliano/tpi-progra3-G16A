@@ -13,6 +13,13 @@ namespace tpi_progra3_G16A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!Seguridad.EsGerente(Session["usuario"]))
+            {
+                Session.Add("error", "No tienes permisos de Gerente para acceder al catálogo.");
+                Response.Redirect("Error.aspx", false);
+                return;
+            }
+
             if (!IsPostBack)
             {
                 CargarInsumosEnGrilla();
