@@ -81,32 +81,32 @@
                                 <i class="bi bi-house-door me-1"></i>Inicio
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liMesas">
                             <a class="nav-link" href="Mesas.aspx">
                                 <i class="bi bi-grid-3x3-gap me-1"></i>Mesas
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liPedidos">
                             <a class="nav-link" href="Pedidos.aspx">
                                 <i class="bi bi-receipt me-1"></i>Pedidos
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liCocina">
                             <a class="nav-link" href="Cocina.aspx">
                                 <i class="bi bi-egg-fried me-1"></i>Cocina
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liCatalogo">
                             <a class="nav-link" href="Catalogo.aspx">
                                 <i class="bi bi-card-list me-1"></i>Catálogo
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liAdmin">
                             <a class="nav-link" href="Admin.aspx">
                                 <i class="bi bi-shield-lock me-1"></i>Admin
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item" runat="server" id="liReportes">
                             <a class="nav-link" href="Reportes.aspx">
                                 <i class="bi bi-bar-chart me-1"></i>Reportes
                             </a>
