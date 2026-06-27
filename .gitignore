@@ -363,4 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Agent Teams Lite / Antigravity metadata
-.atl/
+.atl/
+
+# Configuración local de conexión a base de datos
+ConnectionStrings.config

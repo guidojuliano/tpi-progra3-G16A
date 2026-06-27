@@ -13,5 +13,6 @@ namespace dominio
         public Insumo Insumo { get; set; }
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; } = 0;
+        public decimal Subtotal => Cantidad * PrecioUnitario; //es un calculo que se hace en tiempo de ejecucion (para mostrar en pantalla), no se guarda en la base de datos
     }
 }

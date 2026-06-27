@@ -441,6 +441,74 @@ namespace negocio
             }
         }
 
+        public List<Comanda> ObtenerComandasPorPedido(int idPedido)
+        {
+            var lista = new List<Comanda>();
+            var datos = new AccesoDatos();
+
+            try
+            {
+                datos.setearConsulta(@"
+                    SELECT c.Id, c.PedidoId, c.Estado, c.FechaHora, c.Observaciones,
+                        p.MesaId, p.MeseroId, p.FechaHora AS PedidoFechaHora, p.Estado AS PedidoEstado, p.Total AS PedidoTotal,
+                        u.Nombre, u.Apellido, u.Email, u.Rol, u.Activo
+                    FROM Comandas c
+                    INNER JOIN Pedidos p ON c.PedidoId = p.Id  
+                    INNER JOIN Usuarios u ON p.MeseroId = u.Id
+                    WHERE c.PedidoId = @PedidoId");
+                datos.setearParametro("@PedidoId", idPedido);
+                datos.ejecutarLectura();
+
+                var lector = datos.Lector;
+                var mesaNegocio = new MesaNegocio();
+                while(lector != null && lector.Read())
+                {
+                    var mesa = mesaNegocio.ObtenerMesaPorId(lector.GetInt32(5));
+                    var comanda = new Comanda
+                    {
+                        Id = lector.GetInt32(0),
+                        Estado = (EstadoDetalle)Enum.Parse(typeof(EstadoDetalle), lector.GetString(2)),
+                        FechaHora = lector.GetDateTime(3),
+                        Observaciones = lector.IsDBNull(4) ? string.Empty : lector.GetString(4),
+                        Pedido = new Pedido
+                        {
+                            Id = lector.GetInt32(1),
+                            Mesa = mesa,
+                            Mesero = new Usuario
+                            {
+                                Id = lector.GetInt32(6),
+                                Nombre = lector.GetString(10),
+                                Apellido = lector.GetString(11),
+                                Email = lector.GetString(12),
+                                Rol = (Rol)Enum.Parse(typeof(Rol), lector.GetString(13)),
+                                Activo = lector.GetBoolean(14)
+                            },
+                            FechaHora = lector.GetDateTime(7),
+                            Estado = (EstadoPedido)Enum.Parse(typeof(EstadoPedido), lector.GetString(8)),
+                            Total = lector.GetDecimal(9)
+                        }
+                    };
+                    lista.Add(comanda);
+                }
+                datos.cerrarConexion();
+
+                foreach (var comanda in lista)
+                {
+                    comanda.Detalles = ObtenerDetallesPorComanda(comanda.Id);
+                }
+
+                return lista;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
         public Comanda ObtenerComandaPorId(int idComanda)
         {
             var datos = new AccesoDatos();
@@ -539,6 +607,59 @@ namespace negocio
                     lista.Add(detalle);
                 }
                 return lista;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
+
+        public void EliminarDetalle(int idDetalle)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                // 1. Recuperar cantidad e insumo antes de borrar para reponer stock
+                datos.setearConsulta(@"
+            SELECT InsumoId, Cantidad 
+            FROM DetallesPedidos 
+            WHERE Id = @Id");
+                datos.setearParametro("@Id", idDetalle);
+                datos.ejecutarLectura();
+
+                int insumoId = 0;
+                int cantidad = 0;
+
+                if (datos.Lector != null && datos.Lector.Read())
+                {
+                    insumoId = datos.Lector.GetInt32(0);
+                    cantidad = datos.Lector.GetInt32(1);
+                }
+                datos.cerrarConexion();
+
+                if (insumoId == 0)
+                    throw new InvalidOperationException("No se encontró el detalle a eliminar.");
+
+                // 2. Eliminar el detalle
+                datos = new AccesoDatos();
+                datos.setearConsulta("DELETE FROM DetallesPedidos WHERE Id = @Id");
+                datos.setearParametro("@Id", idDetalle);
+                datos.ejecutarAccion();
+                datos.cerrarConexion();
+
+                // 3. Reponer stock
+                datos = new AccesoDatos();
+                datos.setearConsulta(@"
+            UPDATE Insumos 
+            SET Stock = Stock + @Cantidad 
+            WHERE Id = @InsumoId");
+                datos.setearParametro("@Cantidad", cantidad);
+                datos.setearParametro("@InsumoId", insumoId);
+                datos.ejecutarAccion();
             }
             catch (Exception)
             {
