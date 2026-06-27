@@ -36,14 +36,18 @@
 
            <!-- Grila de ítems consumidos -->
            <asp:GridView ID="gvDetalles" runat="server" CssClass="table table-dark table-bordered mt-3"
-            AutoGenerateColumns="false" EmptyDataText="Sin ítems registrados aún.">
-            <Columns>
-                <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
-                <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
-                <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
-                <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
-            </Columns>
-        </asp:GridView>
+    AutoGenerateColumns="false" EmptyDataText="Sin items registrados aun."
+    OnRowCommand="gvDetalles_RowCommand"
+    DataKeyNames="Id">
+    <Columns>
+        <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
+        <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
+        <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
+        <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
+        <asp:ButtonField CommandName="Eliminar" Text="X" HeaderText="" 
+            ButtonType="Button" ControlStyle-CssClass="btn btn-danger btn-sm" />
+    </Columns>
+</asp:GridView>
 
           <!-- Formulario agregar insumo -->
             <asp:Panel ID="pnlAgregarInsumo" runat="server" CssClass="card bg-secondary mt-3 p-3">

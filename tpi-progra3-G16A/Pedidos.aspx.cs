@@ -182,7 +182,49 @@ namespace tpi_progra3_G16A
 
         protected void btnCerrarPedido_Click(object sender, EventArgs e)
         {
-            // TODO: Paso 4 - cerrar y cobrar
+            try
+            {
+                int idPedido = (int)ViewState["idPedidoActivo"];
+
+                var pedidoNegocio = new PedidoNegocio();
+                decimal total = pedidoNegocio.CerrarYCobrarPedido(idPedido);
+
+                ViewState["idPedidoActivo"] = null;
+                MostrarEstadoMesa();
+
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                    $"showToast('Pedido cerrado con exito. Total cobrado: ${total.ToString("N2")}', 'success');", true);
+            }
+            catch (Exception ex)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                    $"showToast('{ex.Message}', 'warning');", true);
+            }
+        }
+
+        protected void gvDetalles_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Eliminar")
+            {
+                try
+                {
+                    int index = int.Parse(e.CommandArgument.ToString());
+                    int idDetalle = int.Parse(gvDetalles.DataKeys[index].Value.ToString());
+                    int idPedido = (int)ViewState["idPedidoActivo"];
+
+                    var pedidoNegocio = new PedidoNegocio();
+                    pedidoNegocio.EliminarDetalle(idDetalle);
+
+                    CargarDetallePedido(idPedido);
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                        "showToast('Insumo eliminado con exito.', 'success');", true);
+                }
+                catch (Exception ex)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        $"showToast('{ex.Message}', 'warning');", true);
+                }
+            }
         }
     }
 }

@@ -617,5 +617,58 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public void EliminarDetalle(int idDetalle)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                // 1. Recuperar cantidad e insumo antes de borrar para reponer stock
+                datos.setearConsulta(@"
+            SELECT InsumoId, Cantidad 
+            FROM DetallesPedidos 
+            WHERE Id = @Id");
+                datos.setearParametro("@Id", idDetalle);
+                datos.ejecutarLectura();
+
+                int insumoId = 0;
+                int cantidad = 0;
+
+                if (datos.Lector != null && datos.Lector.Read())
+                {
+                    insumoId = datos.Lector.GetInt32(0);
+                    cantidad = datos.Lector.GetInt32(1);
+                }
+                datos.cerrarConexion();
+
+                if (insumoId == 0)
+                    throw new InvalidOperationException("No se encontró el detalle a eliminar.");
+
+                // 2. Eliminar el detalle
+                datos = new AccesoDatos();
+                datos.setearConsulta("DELETE FROM DetallesPedidos WHERE Id = @Id");
+                datos.setearParametro("@Id", idDetalle);
+                datos.ejecutarAccion();
+                datos.cerrarConexion();
+
+                // 3. Reponer stock
+                datos = new AccesoDatos();
+                datos.setearConsulta(@"
+            UPDATE Insumos 
+            SET Stock = Stock + @Cantidad 
+            WHERE Id = @InsumoId");
+                datos.setearParametro("@Cantidad", cantidad);
+                datos.setearParametro("@InsumoId", insumoId);
+                datos.ejecutarAccion();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }
