@@ -116,10 +116,16 @@ namespace tpi_progra3_G16A
                     return;
                 }
 
+                if (!int.TryParse(txtMesaNumero.Text.Trim(), out int numeroMesa) || numeroMesa <= 0)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning", "showToast('El número de mesa debe ser un entero positivo.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalMesa')); myModal.show();", true);
+                    return;
+                }
+
                 MesaNegocio mesaNegocio = new MesaNegocio();
                 Mesa mesa = new Mesa();
 
-                mesa.Numero = int.Parse(txtMesaNumero.Text.Trim());
+                mesa.Numero = numeroMesa;
                 mesa.Estado = (EstadoMesa)Enum.Parse(typeof(EstadoMesa), ddlMesaEstado.SelectedValue);
                 
                 string meseroIdStr = ddlMesaMesero.SelectedValue;
