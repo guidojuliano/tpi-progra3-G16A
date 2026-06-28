@@ -9,6 +9,21 @@ namespace tpi_progra3_G16A
 {
     public partial class Pedidos : Page
     {
+        private List<DetallePedido> CarritoTemporal
+        {
+            get
+            {
+                if (Session["CarritoTemporal"] == null)
+                    Session["CarritoTemporal"] = new List<DetallePedido>();
+                return (List<DetallePedido>)Session["CarritoTemporal"];
+            }
+            set
+            {
+                Session["CarritoTemporal"] = value; 
+            }
+        }
+        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Seguridad.EsMesero(Session["usuario"]) && !Seguridad.EsGerente(Session["usuario"]))
@@ -50,11 +65,12 @@ namespace tpi_progra3_G16A
                 pnlAgregarInsumo.Visible = false;
                 btnAbrirPedido.Visible = false;
                 btnCerrarPedido.Visible = true;
-                gvDetalles.Columns[4].Visible = false; //no ve la columna del boton eliminar
+                //gvDetalles.Columns[4].Visible = false; 
             }
             else if(usuario.Rol == Rol.Mesero)
             {
                 btnCerrarPedido.Visible = false; //mesero no puede cerrar pedidos
+                ddlMeseros.Visible = false; // el mesero no elige, se asigna solo
             }
         }
 
@@ -84,6 +100,8 @@ namespace tpi_progra3_G16A
 
         protected void ddlMesas_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CarritoTemporal = null;
+            pnlBorrador.Visible = false;
             MostrarEstadoMesa();
         }
 
@@ -122,16 +140,20 @@ namespace tpi_progra3_G16A
             try
             {
                 int idMesa = int.Parse(ddlMesas.SelectedValue);
-                int idMesero = int.Parse(ddlMeseros.SelectedValue);
+                var usuario = Session["usuario"] as Usuario;
+
+                int idMesero = usuario.Rol == Rol.Mesero
+                    ? usuario.Id
+                    : int.Parse(ddlMeseros.SelectedValue);
 
                 var pedidoNegocio = new PedidoNegocio();
                 pedidoNegocio.AbrirPedido(idMesa, idMesero);
 
                 MostrarEstadoMesa();
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
-                    "showToast('Pedido abierto con éxito.', 'success');", true);
+                    "showToast('Pedido abierto con exito.', 'success');", true);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
                     $"showToast('{ex.Message}', 'warning');", true);
@@ -145,16 +167,20 @@ namespace tpi_progra3_G16A
                 var pedidoNegocio = new PedidoNegocio();
                 var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
 
-                var detalles = comandas.SelectMany(c => c.Detalles).ToList();
+                var detalles = comandas.SelectMany(c =>
+                {
+                    foreach (var d in c.Detalles) d.Comanda = c;
+                    return c.Detalles;
+                }).ToList();
 
                 gvDetalles.DataSource = detalles;
                 gvDetalles.DataBind();
                 ActualizarTotal(idPedido);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
-                $"showToast('{ex.Message}', 'warning');", true);
+                    $"showToast('{ex.Message}', 'warning');", true);
             }
         }
 
@@ -173,10 +199,8 @@ namespace tpi_progra3_G16A
         {
             try
             {
-                int idPedido = (int)ViewState["idPedidoActivo"];
                 int idInsumo = int.Parse(ddlInsumos.SelectedValue);
                 int cantidad = int.Parse(txtCantidad.Text);
-                string observaciones = txtObservaciones.Text.Trim();
 
                 if (cantidad <= 0)
                 {
@@ -195,15 +219,15 @@ namespace tpi_progra3_G16A
                     PrecioUnitario = insumo.Precio
                 };
 
-                var pedidoNegocio = new PedidoNegocio();
-                pedidoNegocio.RegistrarComanda(idPedido, new List<DetallePedido> { detalle }, observaciones);
+                CarritoTemporal.Add(detalle);
+
+                gvBorrador.DataSource = CarritoTemporal;
+                gvBorrador.DataBind();
+                pnlBorrador.Visible = true;
 
                 txtCantidad.Text = "1";
-                txtObservaciones.Text = string.Empty;
-                CargarDetallePedido(idPedido);
-
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
-                    "showToast('Insumo agregado con exito.', 'success');", true);
+                    "showToast('Agregado al borrador.', 'success');", true);
             }
             catch (Exception ex)
             {
@@ -227,8 +251,20 @@ namespace tpi_progra3_G16A
                 int idPedido = (int)ViewState["idPedidoActivo"];
 
                 var pedidoNegocio = new PedidoNegocio();
-                decimal total = pedidoNegocio.CerrarYCobrarPedido(idPedido);
 
+                var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
+                bool tienePendientes = comandas.Any(c =>
+                    c.Estado != EstadoDetalle.Entregado &&
+                    c.Estado != EstadoDetalle.Cancelado);
+
+                if (tienePendientes)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        "showToast('No se puede cerrar. Hay comandas que no fueron entregadas o canceladas.', 'warning');", true);
+                    return;
+                }
+
+                decimal total = pedidoNegocio.CerrarYCobrarPedido(idPedido);
                 ViewState["idPedidoActivo"] = null;
                 MostrarEstadoMesa();
 
@@ -264,6 +300,70 @@ namespace tpi_progra3_G16A
                     ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
                         $"showToast('{ex.Message}', 'warning');", true);
                 }
+            }
+        }
+        protected void gvBorrador_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EliminarBorrador")
+            {
+                int index = int.Parse(e.CommandArgument.ToString());
+                CarritoTemporal.RemoveAt(index);
+
+                gvBorrador.DataSource = CarritoTemporal;
+                gvBorrador.DataBind();
+
+                if (CarritoTemporal.Count == 0)
+                    pnlBorrador.Visible = false;
+            }
+        }
+        protected void btnEnviarCocina_Click(object sender, System.EventArgs e)
+        {
+            try
+            {
+                if (CarritoTemporal.Count == 0) return;
+
+                int idPedido = (int)ViewState["idPedidoActivo"];
+                string observaciones = txtObservacionesComanda.Text.Trim();
+
+                var pedidoNegocio = new PedidoNegocio();
+                pedidoNegocio.RegistrarComanda(idPedido, CarritoTemporal, observaciones);
+
+                CarritoTemporal = null;
+                gvBorrador.DataSource = null;
+                gvBorrador.DataBind();
+                pnlBorrador.Visible = false;
+                txtObservacionesComanda.Text = string.Empty;
+
+                CargarDetallePedido(idPedido);
+
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                    "showToast('Comanda enviada a cocina con exito.', 'success');", true);
+            }
+            catch (Exception ex)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                    $"showToast('{ex.Message}', 'warning');", true);
+            }
+        }
+        protected string GetEstadoBadgeClass(object estadoObj)
+        {
+            if (estadoObj == null) return "badge bg-secondary";
+
+            string estado = estadoObj.ToString();
+            switch (estado)
+            {
+                case "Pendiente":
+                    return "badge bg-warning text-dark";
+                case "EnPreparacion":
+                    return "badge bg-info text-dark";
+                case "Listo":
+                    return "badge bg-primary text-white";
+                case "Entregado":
+                    return "badge bg-success text-white";
+                case "Cancelado":
+                    return "badge bg-danger text-white";
+                default:
+                    return "badge bg-secondary text-white";
             }
         }
     }

@@ -31,7 +31,8 @@ namespace dominio
 		Pendiente,
 		EnPreparacion,
 		Listo,
-		Entregado
+		Entregado,
+		Cancelado
 	}
 
     public enum TipoInsumo

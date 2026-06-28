@@ -44,6 +44,31 @@
                 <p>Mesero: <asp:Label ID="lblMesero" runat="server"></asp:Label></p>
                 <p>Total: $<asp:Label ID="lblTotal" runat="server"></asp:Label></p>
 
+                <!-- Borrador de la ronda actual -->
+        <asp:Panel ID="pnlBorrador" runat="server" CssClass="card bg-dark border-warning text-white p-3 mb-4" Visible="false">
+            <h5 class="text-warning">Borrador de la Ronda Actual</h5>
+            <asp:GridView ID="gvBorrador" runat="server" CssClass="table table-dark table-striped mt-2" 
+                AutoGenerateColumns="false"
+                OnRowCommand="gvBorrador_RowCommand"
+                DataKeyNames="Id">
+                <Columns>
+                    <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
+                    <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
+                    <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
+                    <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
+                    <asp:ButtonField CommandName="EliminarBorrador" Text="X" HeaderText="" 
+                        ButtonType="Button" ControlStyle-CssClass="btn btn-danger btn-sm" />
+                </Columns>
+            </asp:GridView>
+            <div class="mt-3">
+                <label class="form-label text-white">Observaciones para la Cocina</label>
+                <asp:TextBox ID="txtObservacionesComanda" runat="server" CssClass="form-control mb-3" 
+                    placeholder="Ej: Las papas sin sal, la carne jugosa..."></asp:TextBox>
+                <asp:Button ID="btnEnviarCocina" runat="server" Text="Enviar a Cocina (Marchar)" 
+                    CssClass="btn btn-success fw-bold" OnClick="btnEnviarCocina_Click" />
+            </div>
+        </asp:Panel>
+
            <!-- Grila de ítems consumidos -->
            <asp:GridView ID="gvDetalles" runat="server" CssClass="table table-dark table-bordered mt-3"
     AutoGenerateColumns="false" EmptyDataText="Sin items registrados aun."
@@ -54,8 +79,13 @@
         <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
         <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
         <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
-        <asp:ButtonField CommandName="Eliminar" Text="X" HeaderText="" 
-            ButtonType="Button" ControlStyle-CssClass="btn btn-danger btn-sm" />
+        <asp:TemplateField HeaderText="Estado" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center">
+    <ItemTemplate>
+        <span class='<%# GetEstadoBadgeClass(Eval("Comanda.Estado")) %>'>
+            <%# Eval("Comanda.Estado") %>
+        </span>
+    </ItemTemplate>
+</asp:TemplateField>
     </Columns>
 </asp:GridView>
 
@@ -70,11 +100,7 @@
                     <label class="form-label text-white">Cantidad</label>
                     <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" Text="1"></asp:TextBox>
                 </div>
-                <div class="mb-2">
-                    <label class="form-label text-white">Observaciones</label>
-                    <asp:TextBox ID="txtObservaciones" runat="server" CssClass="form-control" placeholder="Ej: sin cebolla, bien cocido..."></asp:TextBox>
-                </div>
-                <asp:Button ID="btnAgregarInsumo" runat="server" Text="Agregar al Pedido"
+                <asp:Button ID="btnAgregarInsumo" runat="server" Text="Agregar al Borrador"
                     CssClass="btn btn-warning" OnClick="btnAgregarInsumo_Click" />
             </asp:Panel>
 
