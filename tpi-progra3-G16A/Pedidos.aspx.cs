@@ -187,7 +187,7 @@ namespace tpi_progra3_G16A
         private void CargarInsumos()
         {
             var insumoNegocio = new InsumoNegocio();
-            var insumos = insumoNegocio.ObtenerInsumos();
+            var insumos = insumoNegocio.ObtenerInsumos().Where(i => i.Activo && i.Stock > 0).ToList();
 
             ddlInsumos.DataSource = insumos;
             ddlInsumos.DataTextField = "Nombre";

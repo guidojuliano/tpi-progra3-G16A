@@ -153,9 +153,17 @@ namespace tpi_progra3_G16A
                 }
                 else
                 {
-                    // Nuevo
+                    // Verificar que el número de mesa no exista
+                    var mesas = mesaNegocio.ObtenerMesas();
+                    if (mesas.Any(m => m.Numero == numeroMesa))
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                            "showToast('Ya existe una mesa con ese numero. Ingrese un numero diferente.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalMesa')); myModal.show();", true);
+                        return;
+                    }
+
                     mesaNegocio.AgregarMesa(mesa);
-                    msg = "Mesa agregada con éxito.";
+                    msg = "Mesa agregada con exito.";
                 }
 
                 LimpiarCamposMesa();

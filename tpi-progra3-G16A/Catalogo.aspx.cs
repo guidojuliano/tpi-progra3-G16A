@@ -105,6 +105,10 @@ namespace tpi_progra3_G16A
                 insumo.Tipo = (TipoInsumo)Enum.Parse(typeof(TipoInsumo), ddlTipo.SelectedValue);
                 insumo.Activo = chkActivo.Checked;
 
+                // Si stock es 0, forzar inactivo automaticamente
+                if (insumo.Stock == 0)
+                    insumo.Activo = false;
+
                 string msg = "";
                 // Si el titulo contiene "ID", estamos editando
                 if (lblFormTitle.Text.Contains("ID"))
@@ -127,6 +131,11 @@ namespace tpi_progra3_G16A
                 LimpiarCampos();
                 CargarInsumosEnGrilla();
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess", $"showToast('{msg}', 'success');", true);
+            }
+            catch (InvalidOperationException ex)
+            {
+                ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                    $"showToast('{ex.Message}', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalProducto')); myModal.show();", true);
             }
             catch (Exception ex)
             {

@@ -18,7 +18,7 @@ namespace negocio
 
             try
             {
-                datos.setearConsulta("SELECT Id, Nombre, Precio, Stock, Tipo, Activo FROM Insumos WHERE Activo = 1");
+                datos.setearConsulta("SELECT Id, Nombre, Precio, Stock, Tipo, Activo FROM Insumos");
                 datos.ejecutarLectura();
 
                 var lector = datos.Lector;
@@ -115,6 +115,13 @@ namespace negocio
 
         public void ModificarInsumo(Insumo insumo)
         {
+            if (insumo.Stock < 0)
+                throw new InvalidOperationException("El stock no puede ser negativo.");
+
+            if (insumo.Stock == 0)
+                insumo.Activo = false;
+            
+
             var datos = new AccesoDatos();
 
             try
