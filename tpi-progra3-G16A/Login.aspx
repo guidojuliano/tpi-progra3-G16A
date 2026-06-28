@@ -21,7 +21,7 @@
         }
     </style>
 </head>
-<body class="min-vh-100 d-flex align-items-center justify-content-center p-3">
+<body class="min-vh-100 d-flex flex-column align-items-center justify-content-center p-3">
     <form id="form1" runat="server" class="login-card">
         <div class="card bg-dark border-secondary text-white shadow-lg p-4">
             <div class="text-center mb-4">
@@ -59,6 +59,36 @@
             </div>
         </div>
     </form>
+
+    <div class="mt-4 p-3 bg-dark border border-secondary rounded text-secondary shadow" style="max-width: 420px; width: 100%; font-size: 0.85em;">
+        <h6 class="text-warning fw-bold mb-2 text-center"><i class="bi bi-info-circle me-1"></i>Credenciales de Prueba</h6>
+        <table class="table table-dark table-borderless table-sm mb-0 align-middle">
+            <thead>
+                <tr class="text-secondary border-bottom border-secondary">
+                    <th>Rol</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-white fw-bold">Gerente</td>
+                    <td>juan.perez@restobar.com</td>
+                    <td class="font-monospace text-warning">admin123</td>
+                </tr>
+                <tr>
+                    <td class="text-white fw-bold">Mesero</td>
+                    <td>martin.gomez@restobar.com</td>
+                    <td class="font-monospace text-warning">mesero123</td>
+                </tr>
+                <tr>
+                    <td class="text-white fw-bold">Cocina</td>
+                    <td>carlos.rod@restobar.com</td>
+                    <td class="font-monospace text-warning">chef123</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

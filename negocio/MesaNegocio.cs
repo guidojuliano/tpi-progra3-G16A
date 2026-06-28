@@ -101,6 +101,9 @@ namespace negocio
 
         public void AgregarMesa(Mesa nueva)
         {
+            if (nueva.Numero <= 0)
+                throw new ArgumentException("El número de mesa debe ser mayor a cero.");
+
             var datos = new AccesoDatos();
 
             try
@@ -128,6 +131,9 @@ namespace negocio
 
         public void ModificarMesa(Mesa mesa)
         {
+            if (mesa.Numero <= 0)
+                throw new ArgumentException("El número de mesa debe ser mayor a cero.");
+
             var datos = new AccesoDatos();
 
             try

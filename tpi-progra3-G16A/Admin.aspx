@@ -103,7 +103,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="txtMesaNumero" class="form-label text-secondary small fw-bold">Número de Mesa</label>
-                        <asp:TextBox ID="txtMesaNumero" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number"></asp:TextBox>
+                        <asp:TextBox ID="txtMesaNumero" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number" min="1"></asp:TextBox>
                     </div>
 
                     <div class="mb-3">
