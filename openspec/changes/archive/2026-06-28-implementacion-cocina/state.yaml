@@ -1,0 +1,6 @@
+change_name: implementacion-cocina
+active_phase: archive
+status: in_progress
+artifact_store: openspec
+delivery_strategy: ask-on-risk
+execution_mode: interactive
