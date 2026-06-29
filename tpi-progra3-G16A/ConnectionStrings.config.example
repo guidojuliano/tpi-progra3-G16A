@@ -1,0 +1,4 @@
+<!-- Copiá este archivo, cambiale el nombre a ConnectionStrings.config y configurá tu base de datos local -->
+<connectionStrings>
+  <add name="RestoBarDb" connectionString="Server=localhost,1435; Database=RestoBarDb; User Id=sa; Password=RestoBar2026;" providerName="System.Data.SqlClient" />
+</connectionStrings>
