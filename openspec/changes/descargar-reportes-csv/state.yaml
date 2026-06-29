@@ -1,0 +1,11 @@
+change: descargar-reportes-csv
+status: active
+phase: verify
+completed:
+  - proposal
+  - specs
+  - design
+  - tasks
+  - apply
+  - verify
+next: archive
