@@ -670,5 +670,46 @@ namespace negocio
                 datos.cerrarConexion();
             }
         }
+
+        public void CancelarComanda(int idComanda)
+        {
+            var datos = new AccesoDatos();
+            try
+            {
+                //Obtiene los detalles para devolver el stock
+                var detalles = ObtenerDetallesPorComanda(idComanda);
+
+                //Actualiza estado de la comanda a Cancelado
+                datos.setearConsulta(@"
+            UPDATE Comandas
+            SET Estado = 'Cancelado'
+            WHERE Id = @Id");
+                datos.setearParametro("@Id", idComanda);
+                datos.ejecutarAccion();
+                datos.cerrarConexion();
+
+                //Devuelve stock de cada insumo
+                foreach (var det in detalles)
+                {
+                    datos = new AccesoDatos();
+                    datos.setearConsulta(@"
+                UPDATE Insumos
+                SET Stock = Stock + @Cantidad
+                WHERE Id = @InsumoId");
+                    datos.setearParametro("@Cantidad", det.Cantidad);
+                    datos.setearParametro("@InsumoId", det.Insumo.Id);
+                    datos.ejecutarAccion();
+                    datos.cerrarConexion();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            finally
+            {
+                datos.cerrarConexion();
+            }
+        }
     }
 }

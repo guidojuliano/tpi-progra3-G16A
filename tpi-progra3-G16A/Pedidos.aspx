@@ -69,25 +69,48 @@
             </div>
         </asp:Panel>
 
-           <!-- Grila de ítems consumidos -->
-           <asp:GridView ID="gvDetalles" runat="server" CssClass="table table-dark table-bordered mt-3"
-    AutoGenerateColumns="false" EmptyDataText="Sin items registrados aun."
-    OnRowCommand="gvDetalles_RowCommand"
-    DataKeyNames="Id">
-    <Columns>
-        <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
-        <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" />
-        <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" />
-        <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" />
-        <asp:TemplateField HeaderText="Estado" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center">
-    <ItemTemplate>
-        <span class='<%# GetEstadoBadgeClass(Eval("Comanda.Estado")) %>'>
-            <%# Eval("Comanda.Estado") %>
-        </span>
-    </ItemTemplate>
-</asp:TemplateField>
-    </Columns>
-</asp:GridView>
+           <!-- Listado de Comandas agrupadas -->
+        <asp:Repeater ID="repComandas" runat="server" 
+            OnItemDataBound="repComandas_ItemDataBound" 
+            OnItemCommand="repComandas_ItemCommand">
+            <ItemTemplate>
+                <div class="card bg-dark border-secondary mb-3 text-white">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-dark border-secondary py-2">
+                        <h5 class="mb-0 text-warning fw-bold">Comanda #<%# Eval("Id") %></h5>
+                        <span class='<%# GetEstadoBadgeClass(Eval("Estado")) %>'><%# Eval("Estado") %></span>
+                    </div>
+                    <div class="card-body p-3">
+                        <asp:GridView ID="gvItems" runat="server" CssClass="table table-dark table-striped align-middle mb-0"
+                            AutoGenerateColumns="false" GridLines="None" DataKeyNames="Id" 
+                            OnRowCommand="gvItems_RowCommand">
+                            <Columns>
+                                <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
+                                <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center" />
+                                <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" ItemStyle-CssClass="text-end" HeaderStyle-CssClass="text-end" />
+                                <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" ItemStyle-CssClass="text-end" HeaderStyle-CssClass="text-end" />
+                                <asp:TemplateField HeaderText="Acciones" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center">
+                                    <ItemTemplate>
+                                        <asp:Button ID="btnEliminarItem" runat="server" Text="X" 
+                                            CommandName="EliminarItem" 
+                                            CommandArgument='<%# Eval("Id") %>' 
+                                            CssClass="btn btn-danger btn-sm"
+                                            Visible='<%# Eval("Comanda.Estado").ToString() == "Pendiente" %>' />
+                                    </ItemTemplate>
+                                </asp:TemplateField>
+                            </Columns>
+                        </asp:GridView>
+
+                        <div class="mt-2 text-end">
+                            <asp:Button ID="btnCancelarComanda" runat="server" Text="Cancelar Comanda"
+                                CommandName="CancelarComanda" 
+                                CommandArgument='<%# Eval("Id") %>'
+                                CssClass="btn btn-outline-danger btn-sm fw-bold"
+                                Visible='<%# Eval("Estado").ToString() == "Pendiente" %>' />
+                        </div>
+                    </div>
+                </div>
+            </ItemTemplate>
+        </asp:Repeater>
 
           <!-- Formulario agregar insumo -->
             <asp:Panel ID="pnlAgregarInsumo" runat="server" CssClass="card bg-secondary mt-3 p-3">

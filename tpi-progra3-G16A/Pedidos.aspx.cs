@@ -1,9 +1,10 @@
+using dominio;
+using negocio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI;
-using dominio;
-using negocio;
+using System.Web.UI.WebControls;
 
 namespace tpi_progra3_G16A
 {
@@ -167,14 +168,9 @@ namespace tpi_progra3_G16A
                 var pedidoNegocio = new PedidoNegocio();
                 var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
 
-                var detalles = comandas.SelectMany(c =>
-                {
-                    foreach (var d in c.Detalles) d.Comanda = c;
-                    return c.Detalles;
-                }).ToList();
+                repComandas.DataSource = comandas;
+                repComandas.DataBind();
 
-                gvDetalles.DataSource = detalles;
-                gvDetalles.DataBind();
                 ActualizarTotal(idPedido);
             }
             catch (Exception ex)
@@ -277,31 +273,6 @@ namespace tpi_progra3_G16A
                     $"showToast('{ex.Message}', 'warning');", true);
             }
         }
-
-        protected void gvDetalles_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "Eliminar")
-            {
-                try
-                {
-                    int index = int.Parse(e.CommandArgument.ToString());
-                    int idDetalle = int.Parse(gvDetalles.DataKeys[index].Value.ToString());
-                    int idPedido = (int)ViewState["idPedidoActivo"];
-
-                    var pedidoNegocio = new PedidoNegocio();
-                    pedidoNegocio.EliminarDetalle(idDetalle);
-
-                    CargarDetallePedido(idPedido);
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
-                        "showToast('Insumo eliminado con exito.', 'success');", true);
-                }
-                catch (Exception ex)
-                {
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
-                        $"showToast('{ex.Message}', 'warning');", true);
-                }
-            }
-        }
         protected void gvBorrador_RowCommand(object sender, System.Web.UI.WebControls.GridViewCommandEventArgs e)
         {
             if (e.CommandName == "EliminarBorrador")
@@ -364,6 +335,66 @@ namespace tpi_progra3_G16A
                     return "badge bg-danger text-white";
                 default:
                     return "badge bg-secondary text-white";
+            }
+        }
+        protected void repComandas_ItemDataBound(object sender, RepeaterItemEventArgs e)
+        {
+            if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+            {
+                var comanda = (Comanda)e.Item.DataItem;
+                var gvItems = (GridView)e.Item.FindControl("gvItems");
+
+                foreach (var d in comanda.Detalles)
+                    d.Comanda = comanda;
+
+                gvItems.DataSource = comanda.Detalles;
+                gvItems.DataBind();
+            }
+        }
+        protected void repComandas_ItemCommand(object source, RepeaterCommandEventArgs e)
+        {
+            if (e.CommandName == "CancelarComanda")
+            {
+                try
+                {
+                    int idComanda = int.Parse(e.CommandArgument.ToString());
+                    int idPedido = (int)ViewState["idPedidoActivo"];
+
+                    var pedidoNegocio = new PedidoNegocio();
+                    pedidoNegocio.CancelarComanda(idComanda);
+
+                    CargarDetallePedido(idPedido);
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                        "showToast('Comanda cancelada con exito.', 'success');", true);
+                }
+                catch (Exception ex)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        $"showToast('{ex.Message}', 'warning');", true);
+                }
+            }
+        }
+        protected void gvItems_RowCommand(object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "EliminarItem")
+            {
+                try
+                {
+                    int idDetalle = int.Parse(e.CommandArgument.ToString());
+                    int idPedido = (int)ViewState["idPedidoActivo"];
+
+                    var pedidoNegocio = new PedidoNegocio();
+                    pedidoNegocio.EliminarDetalle(idDetalle);
+
+                    CargarDetallePedido(idPedido);
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                        "showToast('Item eliminado con exito.', 'success');", true);
+                }
+                catch (Exception ex)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        $"showToast('{ex.Message}', 'warning');", true);
+                }
             }
         }
     }
