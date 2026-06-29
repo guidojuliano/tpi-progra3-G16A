@@ -123,7 +123,7 @@
                     <label class="form-label text-white">Cantidad</label>
                     <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" Text="1"></asp:TextBox>
                 </div>
-                <asp:Button ID="btnAgregarInsumo" runat="server" Text="Agregar al Borrador"
+                <asp:Button ID="btnAgregarInsumo" runat="server" Text="Sumar a Comanda"
                     CssClass="btn btn-warning" OnClick="btnAgregarInsumo_Click" />
             </asp:Panel>
 
