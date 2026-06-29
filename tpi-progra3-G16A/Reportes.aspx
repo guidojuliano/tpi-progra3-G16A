@@ -27,6 +27,29 @@
         </div>
     </div>
 
+    <!-- Sección de Filtros -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+            <div class="card bg-dark border-secondary text-white p-3">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small fw-bold">Fecha Desde</label>
+                        <asp:TextBox ID="txtFechaDesde" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="date"></asp:TextBox>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-secondary small fw-bold">Fecha Hasta</label>
+                        <asp:TextBox ID="txtFechaHasta" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="date"></asp:TextBox>
+                    </div>
+                    <div class="col-md-6 d-flex gap-2">
+                        <asp:Button ID="btnFiltrar" runat="server" Text="Filtrar" CssClass="btn btn-warning fw-bold px-4" OnClick="btnFiltrar_Click" />
+                        <asp:Button ID="btnLimpiar" runat="server" Text="Limpiar" CssClass="btn btn-outline-secondary px-3" OnClick="btnLimpiar_Click" />
+                        <asp:Button ID="btnExportarCSV" runat="server" Text="Exportar CSV" CssClass="btn btn-success fw-bold px-4 ms-auto" OnClick="btnExportarCSV_Click" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Sección KPIs -->
     <div class="row justify-content-center g-3 mb-5">
         <div class="col-lg-10">
