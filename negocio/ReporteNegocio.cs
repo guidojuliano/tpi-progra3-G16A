@@ -9,12 +9,29 @@ namespace negocio
 {
     public class ReporteNegocio
     {
-        public decimal ObtenerRecaudacionTotal()
+        public decimal ObtenerRecaudacionTotal(DateTime? desde = null, DateTime? hasta = null)
         {
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("SELECT ISNULL(SUM(Total), 0) FROM Pedidos WHERE Estado = 'Cerrado'");
+                string query = "SELECT ISNULL(SUM(Total), 0) FROM Pedidos WHERE Estado = 'Cerrado'";
+                if (desde != null)
+                {
+                    query += " AND FechaHora >= @desde";
+                }
+                if (hasta != null)
+                {
+                    query += " AND FechaHora <= @hasta";
+                }
+                datos.setearConsulta(query);
+                if (desde != null)
+                {
+                    datos.setearParametro("@desde", desde.Value);
+                }
+                if (hasta != null)
+                {
+                    datos.setearParametro("@hasta", hasta.Value);
+                }
                 datos.ejecutarLectura();
                 if (datos.Lector != null && datos.Lector.Read())
                 {
@@ -32,12 +49,29 @@ namespace negocio
             }
         }
 
-        public int ObtenerCantidadPedidos()
+        public int ObtenerCantidadPedidos(DateTime? desde = null, DateTime? hasta = null)
         {
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta("SELECT COUNT(*) FROM Pedidos WHERE Estado = 'Cerrado'");
+                string query = "SELECT COUNT(*) FROM Pedidos WHERE Estado = 'Cerrado'";
+                if (desde != null)
+                {
+                    query += " AND FechaHora >= @desde";
+                }
+                if (hasta != null)
+                {
+                    query += " AND FechaHora <= @hasta";
+                }
+                datos.setearConsulta(query);
+                if (desde != null)
+                {
+                    datos.setearParametro("@desde", desde.Value);
+                }
+                if (hasta != null)
+                {
+                    datos.setearParametro("@hasta", hasta.Value);
+                }
                 datos.ejecutarLectura();
                 if (datos.Lector != null && datos.Lector.Read())
                 {
@@ -55,21 +89,42 @@ namespace negocio
             }
         }
 
-        public List<ProductoMasVendido> ObtenerProductosMasVendidos()
+        public List<ProductoMasVendido> ObtenerProductosMasVendidos(DateTime? desde = null, DateTime? hasta = null)
         {
             var lista = new List<ProductoMasVendido>();
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta(@"
+                string query = @"
                     SELECT TOP 5 i.Nombre, SUM(dp.Cantidad) as CantidadVendida, SUM(dp.Cantidad * dp.PrecioUnitario) as TotalVendido
                     FROM DetallesPedidos dp
                     INNER JOIN Insumos i ON dp.InsumoId = i.Id
                     INNER JOIN Comandas c ON dp.ComandaId = c.Id
                     INNER JOIN Pedidos p ON c.PedidoId = p.Id
-                    WHERE p.Estado = 'Cerrado'
+                    WHERE p.Estado = 'Cerrado'";
+                
+                if (desde != null)
+                {
+                    query += " AND p.FechaHora >= @desde";
+                }
+                if (hasta != null)
+                {
+                    query += " AND p.FechaHora <= @hasta";
+                }
+                
+                query += @"
                     GROUP BY i.Nombre
-                    ORDER BY CantidadVendida DESC");
+                    ORDER BY CantidadVendida DESC";
+
+                datos.setearConsulta(query);
+                if (desde != null)
+                {
+                    datos.setearParametro("@desde", desde.Value);
+                }
+                if (hasta != null)
+                {
+                    datos.setearParametro("@hasta", hasta.Value);
+                }
                 datos.ejecutarLectura();
                 while (datos.Lector != null && datos.Lector.Read())
                 {
@@ -92,19 +147,40 @@ namespace negocio
             }
         }
 
-        public List<VentasMesero> ObtenerVentasPorMesero()
+        public List<VentasMesero> ObtenerVentasPorMesero(DateTime? desde = null, DateTime? hasta = null)
         {
             var lista = new List<VentasMesero>();
             var datos = new AccesoDatos();
             try
             {
-                datos.setearConsulta(@"
+                string query = @"
                     SELECT u.Nombre, u.Apellido, COUNT(p.Id) as CantidadPedidos, SUM(p.Total) as TotalVendido
                     FROM Pedidos p
                     INNER JOIN Usuarios u ON p.MeseroId = u.Id
-                    WHERE p.Estado = 'Cerrado'
+                    WHERE p.Estado = 'Cerrado'";
+
+                if (desde != null)
+                {
+                    query += " AND p.FechaHora >= @desde";
+                }
+                if (hasta != null)
+                {
+                    query += " AND p.FechaHora <= @hasta";
+                }
+
+                query += @"
                     GROUP BY u.Nombre, u.Apellido
-                    ORDER BY TotalVendido DESC");
+                    ORDER BY TotalVendido DESC";
+
+                datos.setearConsulta(query);
+                if (desde != null)
+                {
+                    datos.setearParametro("@desde", desde.Value);
+                }
+                if (hasta != null)
+                {
+                    datos.setearParametro("@hasta", hasta.Value);
+                }
                 datos.ejecutarLectura();
                 while (datos.Lector != null && datos.Lector.Read())
                 {
