@@ -33,6 +33,15 @@ namespace tpi_progra3_G16A
         protected global::System.Web.UI.WebControls.Panel pnlMesaLibre;
 
         /// <summary>
+        /// Control pnlAsignarMesero.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlAsignarMesero;
+
+        /// <summary>
         /// Control ddlMeseros.
         /// </summary>
         /// <remarks>
@@ -40,6 +49,24 @@ namespace tpi_progra3_G16A
         /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlMeseros;
+
+        /// <summary>
+        /// Control pnlMeseroInfo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel pnlMeseroInfo;
+
+        /// <summary>
+        /// Control lblMeseroAsignado.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblMeseroAsignado;
 
         /// <summary>
         /// Control btnAbrirPedido.

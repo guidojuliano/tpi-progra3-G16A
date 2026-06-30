@@ -66,7 +66,8 @@ namespace tpi_progra3_G16A
                 pnlAgregarInsumo.Visible = false;
                 btnAbrirPedido.Visible = false;
                 btnCerrarPedido.Visible = true;
-                //gvDetalles.Columns[4].Visible = false; 
+                pnlAsignarMesero.Visible = false;
+                pnlMeseroInfo.Visible = true;
             }
             else if(usuario.Rol == Rol.Mesero)
             {
@@ -124,6 +125,16 @@ namespace tpi_progra3_G16A
             { 
                 pnlMesaLibre.Visible = true;
                 pnlMesaOcupada.Visible = false;
+
+                var usuario = Session["usuario"] as Usuario;
+                if (usuario != null && usuario.Rol == Rol.Gerente)
+                {
+                    var mesaNegocio = new MesaNegocio();
+                    var mesa = mesaNegocio.ObtenerMesaPorId(idMesa);
+                    lblMeseroAsignado.Text = mesa.Mesero != null
+                        ? mesa.Mesero.Nombre + " " + mesa.Mesero.Apellido
+                        : "Sin mesero asignado";
+                }
             }
             else
             {
@@ -349,6 +360,17 @@ namespace tpi_progra3_G16A
 
                 gvItems.DataSource = comanda.Detalles;
                 gvItems.DataBind();
+
+                // Controla la visibilidad de botones según rol
+                var usuario = Session["usuario"] as Usuario;
+                var btnMarcarEntregado = (Button)e.Item.FindControl("btnMarcarEntregado");
+                var btnCancelarComanda = (Button)e.Item.FindControl("btnCancelarComanda");
+
+                if (usuario != null && usuario.Rol == Rol.Gerente)
+                {
+                    if (btnMarcarEntregado != null) btnMarcarEntregado.Visible = false;
+                    if (btnCancelarComanda != null) btnCancelarComanda.Visible = false;
+                }
             }
         }
         protected void repComandas_ItemCommand(object source, RepeaterCommandEventArgs e)
@@ -366,6 +388,26 @@ namespace tpi_progra3_G16A
                     CargarDetallePedido(idPedido);
                     ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
                         "showToast('Comanda cancelada con exito.', 'success');", true);
+                }
+                catch (Exception ex)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                        $"showToast('{ex.Message}', 'warning');", true);
+                }
+            }
+            else if (e.CommandName == "MarcarEntregado")
+            {
+                try
+                {
+                    int idComanda = int.Parse(e.CommandArgument.ToString());
+                    int idPedido = (int)ViewState["idPedidoActivo"];
+
+                    var pedidoNegocio = new PedidoNegocio();
+                    pedidoNegocio.ActualizarEstadoComanda(idComanda, EstadoDetalle.Entregado);
+
+                    CargarDetallePedido(idPedido);
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
+                        "showToast('Comanda marcada como entregada.', 'success');", true);
                 }
                 catch (Exception ex)
                 {

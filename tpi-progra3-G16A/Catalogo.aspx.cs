@@ -13,9 +13,9 @@ namespace tpi_progra3_G16A
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Seguridad.EsGerente(Session["usuario"]))
+            if (!Seguridad.EsGerente(Session["usuario"]) && !Seguridad.EsMesero(Session["usuario"]))
             {
-                Session.Add("error", "No tienes permisos de Gerente para acceder al catálogo.");
+                Session.Add("error", "No tienes permisos para acceder al catálogo.");
                 Response.Redirect("Error.aspx", false);
                 return;
             }
@@ -23,6 +23,16 @@ namespace tpi_progra3_G16A
             if (!IsPostBack)
             {
                 CargarInsumosEnGrilla();
+                AplicarRestriccionRol();
+            }
+        }
+
+        private void AplicarRestriccionRol()
+        {
+            if (!Seguridad.EsGerente(Session["usuario"]))
+            {
+                btnNuevo.Visible = false;
+                dgvProductos.Columns[dgvProductos.Columns.Count - 1].Visible = false; // oculta columna "Editar"
             }
         }
 
