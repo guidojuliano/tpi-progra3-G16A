@@ -27,6 +27,20 @@
                     <!-- Botón para abrir el modal para agregar un nuevo insumo -->
                     <asp:Button ID="btnNuevo" runat="server" Text="Nuevo Insumo" CssClass="btn btn-warning fw-bold btn-sm" OnClick="btnNuevo_Click" />
                 </div>
+
+                <!-- Filtro por Estado -->
+                <div class="row mb-3">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-dark border-secondary text-secondary fw-bold">Estado</span>
+                            <asp:DropDownList ID="ddlFiltroEstado" runat="server" CssClass="form-select bg-dark border-secondary text-white" AutoPostBack="true" OnSelectedIndexChanged="ddlFiltroEstado_SelectedIndexChanged">
+                                <asp:ListItem Text="Todos" Value="Todos"></asp:ListItem>
+                                <asp:ListItem Text="Activos" Value="Activos"></asp:ListItem>
+                                <asp:ListItem Text="Inactivos" Value="Inactivos"></asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="table-responsive">
                     <asp:GridView ID="dgvProductos" runat="server" AutoGenerateColumns="false" CssClass="table table-dark table-striped align-middle border-secondary" OnSelectedIndexChanged="dgvProductos_SelectedIndexChanged">
