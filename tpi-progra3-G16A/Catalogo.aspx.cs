@@ -41,7 +41,15 @@ namespace tpi_progra3_G16A
             try
             {
                 InsumoNegocio insumoNegocio = new InsumoNegocio();
-                dgvProductos.DataSource = insumoNegocio.ObtenerInsumos();
+                List<Insumo> lista = insumoNegocio.ObtenerInsumos();
+
+                if (ddlFiltroEstado != null && ddlFiltroEstado.SelectedValue != "Todos")
+                {
+                    bool filtrarActivos = ddlFiltroEstado.SelectedValue == "Activos";
+                    lista = lista.FindAll(x => x.Activo == filtrarActivos);
+                }
+
+                dgvProductos.DataSource = lista;
                 dgvProductos.DataBind();
             }
             catch (Exception ex)
@@ -49,6 +57,11 @@ namespace tpi_progra3_G16A
                 Session.Add("error", ex.ToString());
                 Response.Redirect("Error.aspx", false);
             }
+        }
+
+        protected void ddlFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarInsumosEnGrilla();
         }
 
         protected void btnNuevo_Click(object sender, EventArgs e)
@@ -103,6 +116,12 @@ namespace tpi_progra3_G16A
                 if (!decimal.TryParse(txtPrecio.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out precio) || !int.TryParse(txtStock.Text.Trim(), out stock))
                 {
                     ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning", "showToast('Precio y Stock deben ser números válidos.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalProducto')); myModal.show();", true);
+                    return;
+                }
+
+                if (precio < 0 || stock < 0)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning", "showToast('Precio y Stock no pueden ser números negativos.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalProducto')); myModal.show();", true);
                     return;
                 }
 

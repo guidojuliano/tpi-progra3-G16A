@@ -124,7 +124,7 @@
                 </div>
                 <div class="mb-2">
                     <label class="form-label text-white">Cantidad</label>
-                    <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" Text="1"></asp:TextBox>
+                    <asp:TextBox ID="txtCantidad" runat="server" CssClass="form-control" TextMode="Number" Text="1" min="1"></asp:TextBox>
                 </div>
                 <asp:Button ID="btnAgregarInsumo" runat="server" Text="Sumar a Comanda"
                     CssClass="btn btn-warning" OnClick="btnAgregarInsumo_Click" />
