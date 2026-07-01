@@ -79,7 +79,9 @@ namespace tpi_progra3_G16A
         private void CargarMesas()
         {
             var mesasNegocio = new MesaNegocio();
-            var mesas = mesasNegocio.ObtenerMesas();
+            var mesas = mesasNegocio.ObtenerMesas()
+                .Where(m => m.Estado != EstadoMesa.NoDisponible)
+                .ToList();
 
             ddlMesas.DataSource = mesas;
             ddlMesas.DataTextField = "Numero";

@@ -18,6 +18,10 @@
             box-shadow: 0 8px 20px rgba(220, 53, 69, 0.25);
             border-color: #dc3545 !important;
         }
+        .card-mesa-no-disponible {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </asp:Content>
 
@@ -56,7 +60,7 @@
                             </asp:PlaceHolder>
 
                             <!-- Mesa Ocupada (Informativa) -->
-                            <asp:PlaceHolder ID="phOcupada" runat="server" Visible='<%# !(bool)Eval("EsLibre") %>'>
+                            <asp:PlaceHolder ID="phOcupada" runat="server" Visible='<%# !(bool)Eval("EsLibre") && !(bool)Eval("EsNoDisponible") %>'>
                                 <a href='Pedidos.aspx?mesaId=<%# Eval("Id") %>' class="card h-100 bg-dark border-danger text-decoration-none text-white card-mesa-ocupada">
                                 <div class="card-body p-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -72,6 +76,19 @@
                                 </div>
                             </a>
                             </asp:PlaceHolder>
+
+                            <!-- Mesa No Disponible -->
+                            <asp:PlaceHolder ID="phNoDisponible" runat="server" Visible='<%# (bool)Eval("EsNoDisponible") %>'>
+                            <div class="card h-100 bg-dark border-secondary text-white card-mesa-no-disponible">
+                                <div class="card-body text-center p-4">
+                                    <div class="display-6 text-secondary mb-2">
+                                        <i class="bi bi-lock-fill"></i>
+                                    </div>
+                                    <h5 class="card-title text-secondary fw-bold">Mesa <%# Eval("Numero") %></h5>
+                                    <span class="badge bg-secondary px-3 py-2 mt-2">No Disponible</span>
+                                </div>
+                            </div>
+                        </asp:PlaceHolder>
                         </div>
                     </ItemTemplate>
                 </asp:Repeater>

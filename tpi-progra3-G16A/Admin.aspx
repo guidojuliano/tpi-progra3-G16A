@@ -106,20 +106,15 @@
                         <asp:TextBox ID="txtMesaNumero" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number" min="1"></asp:TextBox>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="ddlMesaEstado" class="form-label text-secondary small fw-bold">Estado</label>
-                        <asp:DropDownList ID="ddlMesaEstado" runat="server" CssClass="form-select bg-dark border-secondary text-white">
-                            <asp:ListItem Text="Libre" Value="Libre"></asp:ListItem>
-                            <asp:ListItem Text="Ocupada" Value="Ocupada"></asp:ListItem>
-                            <asp:ListItem Text="No Disponible" Value="NoDisponible"></asp:ListItem>
-                        </asp:DropDownList>
-                    </div>
-
-                    <div class="mb-2">
-                        <label for="ddlMesaMesero" class="form-label text-secondary small fw-bold">Asignar Mesero</label>
-                        <asp:DropDownList ID="ddlMesaMesero" runat="server" CssClass="form-select bg-dark border-secondary text-white">
-                        </asp:DropDownList>
-                    </div>
+                    <asp:Panel ID="pnlEstadoMesa" runat="server">
+                        <div class="mb-3">
+                            <label for="ddlMesaEstado" class="form-label text-secondary small fw-bold">Estado</label>
+                            <asp:DropDownList ID="ddlMesaEstado" runat="server" CssClass="form-select bg-dark border-secondary text-white">
+                                <asp:ListItem Text="Libre" Value="Libre"></asp:ListItem>
+                                <asp:ListItem Text="No Disponible" Value="NoDisponible"></asp:ListItem>
+                            </asp:DropDownList>
+                        </div>
+                </asp:Panel>
                 </div>
                 <div class="modal-footer border-secondary">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>

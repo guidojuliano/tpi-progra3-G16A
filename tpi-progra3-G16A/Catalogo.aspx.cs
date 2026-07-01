@@ -59,7 +59,7 @@ namespace tpi_progra3_G16A
             }
         }
 
-        protected void ddlFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
+        protected void DdlFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
         {
             CargarInsumosEnGrilla();
         }
@@ -181,6 +181,10 @@ namespace tpi_progra3_G16A
             ddlTipo.SelectedIndex = 0;
             chkActivo.Checked = true;
             lblFormTitle.Text = "Agregar Insumo";
+        }
+        protected void ddlFiltroEstado_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CargarInsumosEnGrilla();
         }
     }
 }
