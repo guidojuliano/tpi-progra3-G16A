@@ -26,16 +26,23 @@
         </div>
 
         <!-- Panel: Mesa Libre -->
-        <asp:Panel ID="pnlMesaLibre" runat="server" Visible="false" CssClass="card bg-dark text-white border-secondary mb-4">
-            <div class="card-body">
-                <h4 class="text-warning">Mesa Libre</h4>
-                <label for="ddlMeseros" class="form-label">Asignar Mesero</label>
+         <asp:Panel ID="pnlMesaLibre" runat="server" Visible="false" CssClass="card bg-dark text-white border-secondary mb-4">
+        <div class="card-body">
+            <h4 class="text-warning">Mesa Libre</h4>
+        
+            <asp:Panel ID="pnlAsignarMesero" runat="server">
                 <asp:DropDownList ID="ddlMeseros" runat="server" CssClass="form-select mb-3">
                 </asp:DropDownList>
-                <asp:Button ID="btnAbrirPedido" runat="server" Text="Abrir Pedido" 
-                    CssClass="btn btn-warning" OnClick="btnAbrirPedido_Click" />
-            </div>
-        </asp:Panel>
+            </asp:Panel>
+
+            <asp:Panel ID="pnlMeseroInfo" runat="server" Visible="false">
+                <p>Mesero asignado: <asp:Label ID="lblMeseroAsignado" runat="server"></asp:Label></p>
+            </asp:Panel>
+
+            <asp:Button ID="btnAbrirPedido" runat="server" Text="Abrir Pedido" 
+                CssClass="btn btn-warning" OnClick="btnAbrirPedido_Click" />
+        </div>
+    </asp:Panel>
 
         <!-- Panel: Mesa Ocupada -->
         <asp:Panel ID="pnlMesaOcupada" runat="server" Visible="false" CssClass="card bg-dark text-white border-secondary mb-4">
@@ -101,6 +108,11 @@
                         </asp:GridView>
 
                         <div class="mt-2 text-end">
+                            <asp:Button ID="btnMarcarEntregado" runat="server" Text="Entregado"
+                                CommandName="MarcarEntregado" 
+                                CommandArgument='<%# Eval("Id") %>'
+                                CssClass="btn btn-success btn-sm fw-bold me-2"
+                                Visible='<%# Eval("Estado").ToString() == "Listo" %>' />
                             <asp:Button ID="btnCancelarComanda" runat="server" Text="Cancelar Comanda"
                                 CommandName="CancelarComanda" 
                                 CommandArgument='<%# Eval("Id") %>'

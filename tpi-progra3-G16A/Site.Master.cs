@@ -19,7 +19,7 @@ namespace tpi_progra3_G16A
                 liMesas.Visible = user.Rol == Rol.Mesero || user.Rol == Rol.Gerente;
                 liPedidos.Visible = user.Rol == Rol.Mesero || user.Rol == Rol.Gerente;
                 liCocina.Visible = user.Rol == Rol.Cocina || user.Rol == Rol.Gerente;
-                liCatalogo.Visible = user.Rol == Rol.Gerente;
+                liCatalogo.Visible = user.Rol == Rol.Gerente || user.Rol == Rol.Mesero;
                 liAdmin.Visible = user.Rol == Rol.Gerente;
                 liReportes.Visible = user.Rol == Rol.Gerente;
             }
