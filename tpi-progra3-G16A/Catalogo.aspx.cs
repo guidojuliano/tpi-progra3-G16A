@@ -119,6 +119,12 @@ namespace tpi_progra3_G16A
                     return;
                 }
 
+                if (precio < 0 || stock < 0)
+                {
+                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning", "showToast('Precio y Stock no pueden ser números negativos.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalProducto')); myModal.show();", true);
+                    return;
+                }
+
                 InsumoNegocio insumoNegocio = new InsumoNegocio();
                 Insumo insumo = new Insumo();
 

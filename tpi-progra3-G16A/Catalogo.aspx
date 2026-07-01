@@ -89,12 +89,12 @@
 
                     <div class="mb-3">
                         <label for="txtPrecio" class="form-label text-secondary small fw-bold">Precio ($)</label>
-                        <asp:TextBox ID="txtPrecio" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number" step="0.01"></asp:TextBox>
+                        <asp:TextBox ID="txtPrecio" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number" step="0.01" min="0"></asp:TextBox>
                     </div>
 
                     <div class="mb-3">
                         <label for="txtStock" class="form-label text-secondary small fw-bold">Stock Inicial</label>
-                        <asp:TextBox ID="txtStock" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number"></asp:TextBox>
+                        <asp:TextBox ID="txtStock" runat="server" CssClass="form-control bg-dark border-secondary text-white" type="number" min="0"></asp:TextBox>
                     </div>
 
                     <div class="mb-3">
