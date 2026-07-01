@@ -419,28 +419,5 @@ namespace tpi_progra3_G16A
                 }
             }
         }
-        protected void gvItems_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "EliminarItem")
-            {
-                try
-                {
-                    int idDetalle = int.Parse(e.CommandArgument.ToString());
-                    int idPedido = (int)ViewState["idPedidoActivo"];
-
-                    var pedidoNegocio = new PedidoNegocio();
-                    pedidoNegocio.EliminarDetalle(idDetalle);
-
-                    CargarDetallePedido(idPedido);
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
-                        "showToast('Item eliminado con exito.', 'success');", true);
-                }
-                catch (Exception ex)
-                {
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
-                        $"showToast('{ex.Message}', 'warning');", true);
-                }
-            }
-        }
     }
 }

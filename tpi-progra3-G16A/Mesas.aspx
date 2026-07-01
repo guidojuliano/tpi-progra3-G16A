@@ -10,6 +10,14 @@
             box-shadow: 0 8px 20px rgba(40, 167, 69, 0.25);
             border-color: #198754 !important;
         }
+        .card-mesa-ocupada {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card-mesa-ocupada:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.25);
+            border-color: #dc3545 !important;
+        }
     </style>
 </asp:Content>
 
@@ -49,21 +57,20 @@
 
                             <!-- Mesa Ocupada (Informativa) -->
                             <asp:PlaceHolder ID="phOcupada" runat="server" Visible='<%# !(bool)Eval("EsLibre") %>'>
-                                <div class="card h-100 bg-dark border-danger text-white">
-                                    <div class="card-body p-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                            <h5 class="card-title text-danger fw-bold mb-0">Mesa <%# Eval("Numero") %></h5>
-                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-2 py-1">Ocupada</span>
-                                        </div>
-                                        <div class="mt-3">
-                                            <p class="text-secondary small mb-1"><i class="bi bi-person-fill me-1"></i>Atendida por:</p>
-                                            <p class="fw-bold mb-2"><%# Eval("NombreMesero") %></p>
-                                            
-                                            <p class="text-secondary small mb-1"><i class="bi bi-receipt me-1"></i>Pedido Activo:</p>
-                                            <p class="fw-bold text-warning mb-0">#<%# Eval("PedidoId") %></p>
-                                        </div>
+                                <a href='Pedidos.aspx?mesaId=<%# Eval("Id") %>' class="card h-100 bg-dark border-danger text-decoration-none text-white card-mesa-ocupada">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title text-danger fw-bold mb-0">Mesa <%# Eval("Numero") %></h5>
+                                        <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-2 py-1">Ocupada</span>
+                                    </div>
+                                    <div class="mt-3">
+                                        <p class="text-secondary small mb-1"><i class="bi bi-person-fill me-1"></i>Atendida por:</p>
+                                        <p class="fw-bold mb-2"><%# Eval("NombreMesero") %></p>
+                                        <p class="text-secondary small mb-1"><i class="bi bi-receipt me-1"></i>Pedido Activo:</p>
+                                        <p class="fw-bold text-warning mb-0">#<%# Eval("PedidoId") %></p>
                                     </div>
                                 </div>
+                            </a>
                             </asp:PlaceHolder>
                         </div>
                     </ItemTemplate>

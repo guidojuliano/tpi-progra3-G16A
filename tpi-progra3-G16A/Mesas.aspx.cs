@@ -62,11 +62,13 @@ namespace tpi_progra3_G16A
                         {
                             vm.NombreMesero = $"{pedido.Mesero.Nombre} {pedido.Mesero.Apellido}";
                             vm.PedidoId = pedido.Id;
+                            vm.EstadoPedido = pedido.Estado.ToString();
                         }
                         else
                         {
                             vm.NombreMesero = m.Mesero != null ? $"{m.Mesero.Nombre} {m.Mesero.Apellido}" : "Sin asignar";
                             vm.PedidoId = 0;
+                            vm.EstadoPedido = string.Empty;
                         }
                     }
                     

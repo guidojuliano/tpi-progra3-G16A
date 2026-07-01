@@ -101,7 +101,8 @@ namespace negocio
                     INNER JOIN Insumos i ON dp.InsumoId = i.Id
                     INNER JOIN Comandas c ON dp.ComandaId = c.Id
                     INNER JOIN Pedidos p ON c.PedidoId = p.Id
-                    WHERE p.Estado = 'Cerrado'";
+                    WHERE p.Estado = 'Cerrado'
+                    AND c.Estado != 'Cancelado'";
                 
                 if (desde != null)
                 {
