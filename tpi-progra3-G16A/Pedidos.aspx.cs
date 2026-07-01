@@ -247,7 +247,10 @@ namespace tpi_progra3_G16A
         {
             var pedidoNegocio = new PedidoNegocio();
             var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
-            var total = comandas.SelectMany(c => c.Detalles).Sum(d => d.Subtotal);
+            var total = comandas
+                .Where(c => c.Estado != EstadoDetalle.Cancelado)
+                .SelectMany(c => c.Detalles)
+                .Sum(d => d.Subtotal);
             lblTotal.Text = total.ToString("N2");
         }
 
