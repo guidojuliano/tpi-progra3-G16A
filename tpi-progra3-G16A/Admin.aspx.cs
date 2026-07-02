@@ -23,7 +23,6 @@ namespace tpi_progra3_G16A
             if (!IsPostBack)
             {
                 CargarDatosYGrillas();
-                CargarMeserosDropDownList();
             }
         }
 
@@ -46,36 +45,12 @@ namespace tpi_progra3_G16A
             }
         }
 
-        private void CargarMeserosDropDownList()
-        {
-            try
-            {
-                ddlMesaMesero.Items.Clear();
-                ddlMesaMesero.Items.Add(new ListItem("Ninguno / Sin asignar", ""));
-                
-                UsuarioNegocio usuarioNegocio = new UsuarioNegocio();
-                List<Usuario> empleados = usuarioNegocio.ObtenerUsuarios();
-                foreach (Usuario emp in empleados)
-                {
-                    if (emp.Rol == Rol.Mesero && emp.Activo)
-                    {
-                        ddlMesaMesero.Items.Add(new ListItem(emp.Nombre + " " + emp.Apellido, emp.Id.ToString()));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Session.Add("error", ex.ToString());
-                Response.Redirect("Error.aspx", false);
-            }
-        }
-
         // --- Acciones de Mesas ---
         protected void btnNuevoMesa_Click(object sender, EventArgs e)
         {
             LimpiarCamposMesa();
             lblMesaFormTitle.Text = "Nueva Mesa";
-            
+            pnlEstadoMesa.Visible = false;
             // Inyectar script para abrir el modal de Mesa
             ClientScript.RegisterStartupScript(this.GetType(), "OpenMesaModal", "var myModal = new bootstrap.Modal(document.getElementById('modalMesa')); myModal.show();", true);
         }
@@ -87,12 +62,18 @@ namespace tpi_progra3_G16A
                 string id = dgvMesas.SelectedRow.Cells[0].Text;
                 MesaNegocio mesaNegocio = new MesaNegocio();
                 Mesa mesa = mesaNegocio.ObtenerMesaPorId(int.Parse(id));
+                pnlEstadoMesa.Visible = true;
 
                 if (mesa != null)
                 {
+                    if (mesa.Estado == EstadoMesa.Ocupada)
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                            "showToast('No se puede editar una mesa ocupada.', 'warning');", true);
+                        return;
+                    }
                     txtMesaNumero.Text = mesa.Numero.ToString();
                     ddlMesaEstado.SelectedValue = mesa.Estado.ToString();
-                    ddlMesaMesero.SelectedValue = mesa.Mesero != null ? mesa.Mesero.Id.ToString() : "";
                     lblMesaFormTitle.Text = "Editar Mesa (ID " + id + ")";
 
                     // Inyectar script para abrir el modal de Mesa
@@ -127,16 +108,8 @@ namespace tpi_progra3_G16A
 
                 mesa.Numero = numeroMesa;
                 mesa.Estado = (EstadoMesa)Enum.Parse(typeof(EstadoMesa), ddlMesaEstado.SelectedValue);
-                
-                string meseroIdStr = ddlMesaMesero.SelectedValue;
-                if (!string.IsNullOrEmpty(meseroIdStr))
-                {
-                    mesa.Mesero = new Usuario { Id = int.Parse(meseroIdStr) };
-                }
-                else
-                {
-                    mesa.Mesero = null;
-                }
+
+                mesa.Mesero = null;
 
                 string msg = "";
                 if (lblMesaFormTitle.Text.Contains("ID"))
@@ -147,6 +120,15 @@ namespace tpi_progra3_G16A
                     int endIndex = titleText.IndexOf(")");
                     string idStr = titleText.Substring(startIndex, endIndex - startIndex);
                     mesa.Id = int.Parse(idStr);
+
+                    // Verificar que el número no exista en otra mesa distinta
+                    var mesas = mesaNegocio.ObtenerMesas();
+                    if (mesas.Any(m => m.Numero == numeroMesa && m.Id != mesa.Id))
+                    {
+                        ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
+                            "showToast('Ya existe una mesa con ese numero. Ingrese un numero diferente.', 'warning'); var myModal = new bootstrap.Modal(document.getElementById('modalMesa')); myModal.show();", true);
+                        return;
+                    }
 
                     mesaNegocio.ModificarMesa(mesa);
                     msg = "Mesa modificada con éxito.";
@@ -162,6 +144,7 @@ namespace tpi_progra3_G16A
                         return;
                     }
 
+                    mesa.Estado = EstadoMesa.Libre; // siempre libre al crear
                     mesaNegocio.AgregarMesa(mesa);
                     msg = "Mesa agregada con exito.";
                 }
@@ -181,7 +164,6 @@ namespace tpi_progra3_G16A
         {
             txtMesaNumero.Text = string.Empty;
             ddlMesaEstado.SelectedIndex = 0;
-            ddlMesaMesero.SelectedIndex = 0;
         }
 
         // --- Acciones de Empleados ---
@@ -291,7 +273,6 @@ namespace tpi_progra3_G16A
 
                 LimpiarCamposEmpleado();
                 CargarDatosYGrillas();
-                CargarMeserosDropDownList();
                 ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess", $"showToast('{msg}', 'success');", true);
             }
             catch (Exception ex)

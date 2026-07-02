@@ -16,6 +16,8 @@ namespace tpi_progra3_G16A
             public int Id { get; set; }
             public int Numero { get; set; }
             public bool EsLibre { get; set; }
+            public bool EsNoDisponible { get; set; }
+
             public string NombreMesero { get; set; }
             public int PedidoId { get; set; }
         }
@@ -52,10 +54,11 @@ namespace tpi_progra3_G16A
                     {
                         Id = m.Id,
                         Numero = m.Numero,
-                        EsLibre = m.Estado.ToString() == "Libre"
+                        EsLibre = m.Estado == EstadoMesa.Libre,
+                        EsNoDisponible = m.Estado == EstadoMesa.NoDisponible
                     };
                     
-                    if (!vm.EsLibre)
+                    if (!vm.EsLibre && !vm.EsNoDisponible)
                     {
                         var pedido = negocioPedido.ObtenerPedidoAbiertoPorMesa(m.Id);
                         if (pedido != null)

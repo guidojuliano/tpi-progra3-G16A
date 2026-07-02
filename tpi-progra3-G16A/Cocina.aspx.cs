@@ -136,6 +136,12 @@ namespace tpi_progra3_G16A
                     btnEmpezar.Visible = false;
                     btnCompletar.Visible = false;
                 }
+                // Si es Gerente, ocultar ambos botones
+                if (Seguridad.EsGerente(Session["usuario"]))
+                {
+                    btnEmpezar.Visible = false;
+                    btnCompletar.Visible = false;
+                }
             }
         }
 

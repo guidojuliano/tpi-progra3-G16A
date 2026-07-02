@@ -88,22 +88,13 @@
                     </div>
                     <div class="card-body p-3">
                         <asp:GridView ID="gvItems" runat="server" CssClass="table table-dark table-striped align-middle mb-0"
-                            AutoGenerateColumns="false" GridLines="None" DataKeyNames="Id" 
-                            OnRowCommand="gvItems_RowCommand">
+                            AutoGenerateColumns="false" GridLines="None" DataKeyNames="Id">
                             <Columns>
                                 <asp:BoundField DataField="Insumo.Nombre" HeaderText="Insumo" />
                                 <asp:BoundField DataField="Cantidad" HeaderText="Cantidad" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center" />
                                 <asp:BoundField DataField="PrecioUnitario" HeaderText="Precio Unit." DataFormatString="{0:N2}" ItemStyle-CssClass="text-end" HeaderStyle-CssClass="text-end" />
                                 <asp:BoundField DataField="Subtotal" HeaderText="Subtotal" DataFormatString="{0:N2}" ItemStyle-CssClass="text-end" HeaderStyle-CssClass="text-end" />
-                                <asp:TemplateField HeaderText="Acciones" ItemStyle-CssClass="text-center" HeaderStyle-CssClass="text-center">
-                                    <ItemTemplate>
-                                        <asp:Button ID="btnEliminarItem" runat="server" Text="X" 
-                                            CommandName="EliminarItem" 
-                                            CommandArgument='<%# Eval("Id") %>' 
-                                            CssClass="btn btn-danger btn-sm"
-                                            Visible='<%# Eval("Comanda.Estado").ToString() == "Pendiente" %>' />
-                                    </ItemTemplate>
-                                </asp:TemplateField>
+                               
                             </Columns>
                         </asp:GridView>
 

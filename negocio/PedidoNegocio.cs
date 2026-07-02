@@ -186,7 +186,8 @@ namespace negocio
                            ISNULL((SELECT SUM(dp.Cantidad * dp.PrecioUnitario) 
                                    FROM DetallesPedidos dp 
                                    INNER JOIN Comandas c ON dp.ComandaId = c.Id 
-                                   WHERE c.PedidoId = p.Id), 0.00) AS TotalCalculado
+                                   WHERE c.PedidoId = p.Id
+                                   AND c.Estado != 'Cancelado'), 0.00) AS TotalCalculado
                     FROM Pedidos p
                     WHERE p.Id = @PedidoId");
                 datos.setearParametro("@PedidoId", idPedido);

@@ -79,7 +79,9 @@ namespace tpi_progra3_G16A
         private void CargarMesas()
         {
             var mesasNegocio = new MesaNegocio();
-            var mesas = mesasNegocio.ObtenerMesas();
+            var mesas = mesasNegocio.ObtenerMesas()
+                .Where(m => m.Estado != EstadoMesa.NoDisponible)
+                .ToList();
 
             ddlMesas.DataSource = mesas;
             ddlMesas.DataTextField = "Numero";
@@ -247,7 +249,10 @@ namespace tpi_progra3_G16A
         {
             var pedidoNegocio = new PedidoNegocio();
             var comandas = pedidoNegocio.ObtenerComandasPorPedido(idPedido);
-            var total = comandas.SelectMany(c => c.Detalles).Sum(d => d.Subtotal);
+            var total = comandas
+                .Where(c => c.Estado != EstadoDetalle.Cancelado)
+                .SelectMany(c => c.Detalles)
+                .Sum(d => d.Subtotal);
             lblTotal.Text = total.ToString("N2");
         }
 
@@ -408,29 +413,6 @@ namespace tpi_progra3_G16A
                     CargarDetallePedido(idPedido);
                     ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
                         "showToast('Comanda marcada como entregada.', 'success');", true);
-                }
-                catch (Exception ex)
-                {
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastWarning",
-                        $"showToast('{ex.Message}', 'warning');", true);
-                }
-            }
-        }
-        protected void gvItems_RowCommand(object sender, GridViewCommandEventArgs e)
-        {
-            if (e.CommandName == "EliminarItem")
-            {
-                try
-                {
-                    int idDetalle = int.Parse(e.CommandArgument.ToString());
-                    int idPedido = (int)ViewState["idPedidoActivo"];
-
-                    var pedidoNegocio = new PedidoNegocio();
-                    pedidoNegocio.EliminarDetalle(idDetalle);
-
-                    CargarDetallePedido(idPedido);
-                    ClientScript.RegisterStartupScript(this.GetType(), "ShowToastSuccess",
-                        "showToast('Item eliminado con exito.', 'success');", true);
                 }
                 catch (Exception ex)
                 {
